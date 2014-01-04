@@ -1,59 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
-import os
-
-from flask import Flask
+from flask import Flask, Blueprint
 app = Flask(__name__)
 
-from flask import render_template
-from flask import request
+from flask import render_template, url_for
+from flask import request, Request
 from flask import Response
-
 from werkzeug.exceptions import BadRequest
+from werkzeug.datastructures import OrderedMultiDict
+import re
+import os
+from deform import Form
+from deform.exception import ValidationFailure
 
-from flask_wtf import Form
-from wtforms import TextField, TextAreaField, IntegerField, FormField, FieldList, RadioField
+class MyRequest(Request):
+  parameter_storage_class = OrderedMultiDict
 
-class VzdelanieForm(Form):
-  nazov_skoly = TextField(u'Názov vysokej školy alebo inštitúcie')
-  rok = IntegerField(u'Rok')
-  odbor_program = TextField(u'Odbor a program')
+app.request_class = MyRequest
 
-class PedagogickaCinnostForm(Form):
-  nazov_predmetu = TextField(u'Názov predmetu')
-  stupen_studia = TextField(u'Stupeň štúdia')
-  typ_cinnosti = TextField(u'Typ vzdelávacej činnosti')
-
-class PredchadzajucaPredagogickaCinnostForm(PedagogickaCinnostForm):
-  akademicky_rok = TextField(u'Akademický rok')
-  skola = TextField(u'Názov vysokej školy')
-
-class TvorivaCinnostForm(Form):
-  nazov_projektu = TextField(u'Názov projektu')
-  veduci_projektu = RadioField(u'Vedúci projektu', choices=(('true', u'Áno'), ('false', u'Nie')))
-
-class CharakteristikaForm(Form):
-  titul_pred = TextField(u'Tituly pred menom')
-  priezvisko = TextField(u'Priezvisko')
-  meno = TextField(u'Meno')
-  titul_za = TextField(u'Tituly za menom')
-  rok_narodenia = IntegerField(u'Rok narodenia')
-  pracovisko = TextAreaField(u'Názov a adresa pracoviska')
-  email = TextField(u'E-mail')
-  vzd_druhy = FormField(VzdelanieForm)
-  vzd_treti = FormField(VzdelanieForm)
-  vzd_docent = FormField(VzdelanieForm)
-  vzd_profesor = FormField(VzdelanieForm)
-  vzd_doktor_vied = FormField(VzdelanieForm)
-  vzd_dalsie = FormField(VzdelanieForm)
-  veduci_bakalarske = IntegerField(u'Počet vedených bakalárskych prác')
-  veduci_diplomove = IntegerField(u'Počet vedených diplomových prác')
-  veduci_dizertacne = IntegerField(u'Počet vedených dizertačných prác')
-  akt_pedag_cinnost = FieldList(FormField(PedagogickaCinnostForm))
-  predch_pedag_cinnost = FieldList(FormField(PredchadzajucaPredagogickaCinnostForm))
-  tvoriva_cinnost = FieldList(FormField(TvorivaCinnostForm))
+from schema import Charakteristika
 
 if 'CHARAKTERISTIKA_DEBUG' in os.environ:
   app.debug = True
@@ -62,13 +28,24 @@ from local_settings import active_config
 config = active_config(app)
 app.secret_key = config.secret
 
-@app.route('/')
+deform_bp = Blueprint('deform', 'deform', static_folder='static', url_prefix='/deform')
+app.register_blueprint(deform_bp)
+
+#def convert_deform_resources(resources):
+#  return {typ: [url_for('deform.static', filename=x.lstrip('deform:static/')) for x in resources[typ]] for typ in resources}
+
+@app.route('/', methods=['POST', 'GET'])
 def index():
-  form = CharakteristikaForm()
-  form.akt_pedag_cinnost.append_entry()
-  form.predch_pedag_cinnost.append_entry()
-  form.tvoriva_cinnost.append_entry()
+  form = Form(Charakteristika(), buttons=('submit',))
+  if request.method == 'POST':
+    controls = request.form.items(multi=True)
+    try:
+      form.validate(controls)
+    except ValidationFailure, e:
+      pass
   return render_template('form.html', form=form)
+
+print app.url_map
 
 if __name__ == '__main__':
   import sys

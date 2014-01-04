@@ -1,19 +1,26 @@
 {% macro render_errors(field) %}
-  {% if field.errors %}
-    <ul class="errors">
-    {% for error in field.errors %}
-      <li>{{ error }}</li>
+  {% if field.error and not field.widget.hidden and not field.typ.__class__.__name__=='Mapping' %}
+    {% for error in field.error.messages() %}
+      <p class="help-block">{{ error }}</p>
     {% endfor %}
-    </ul>
   {% endif %}
 {% endmacro %}
 
 {% macro render_value_and_errors(field) %}
-  {{ field(**kwargs) }}
+  {{ field.render(**kwargs)|safe }}
   {{ render_errors(field) }}
 {% endmacro %}
 
 {% macro render_field(field) %}
-  <dt>{{ field.label }}</dt>
-  <dd>{{ render_value_and_errors(field) }}</dd>
+  <div class="form-group {{ field.error and 'has-error' or '' }} {{ field.widget.item_css_class or '' }}">
+    {% if not (field.widget.hidden or field.widget.category == 'structural') %}
+      <label for="{{ field.oid }}" class="control-label {{ 'required' if field.required }}">{{ field.title }}</label>
+    {% endif %}
+    {{ render_value_and_errors(field) }}
+    {% if field.description and not field.widget.hidden %}
+      <p class="help-block">
+        {{ field.description }}
+      </p>
+    {% endif %}
+  </div>
 {% endmacro %}
