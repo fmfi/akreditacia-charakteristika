@@ -37,15 +37,14 @@ app.register_blueprint(deform_bp)
 @app.route('/', methods=['POST', 'GET'])
 def index():
   form = Form(Charakteristika(), buttons=('submit',))
+  data = None
   if request.method == 'POST':
     controls = request.form.items(multi=True)
     try:
-      form.validate(controls)
+      data = form.validate(controls)
     except ValidationFailure, e:
       pass
-  return render_template('form.html', form=form)
-
-print app.url_map
+  return render_template('form.html', form=form, data=data)
 
 if __name__ == '__main__':
   import sys

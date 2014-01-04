@@ -1,9 +1,9 @@
-{% from "macros.html" import render_field, render_errors, render_value_and_errors %}
+{% from "macros.html" import render_field, render_errors, render_value_and_errors, render_description, widget_in_panel %}
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>AAA</title>
+    <title>Vedecko-pedagogická charakteristika fyzickej osoby</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/bootstrap.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/typeahead.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/beautify.css') }}" />
@@ -21,10 +21,9 @@
     </style>
   </head>
   <body><div class="main-content">
-    {{ resources }}
     <h1>Vedecko-pedagogická charakteristika fyzickej osoby</h1>
     <p>Tento formulár slúži na zozbieranie údajov pre potreby komplexnej akreditácie
-       a je zhotovený podľa prílohy č. 7 nariadenia vlády č. 104/2003 Z.z.</p>
+       a je zhotovený podľa <a href="http://www.zakonypreludi.sk/file/data/2013c100z427p07.pdf">prílohy č. 7</a> <a href="http://www.zakonypreludi.sk/zz/2003-104/znenie-20140101">nariadenia vlády č. 104/2003 Z.z. o akreditačnej komisii v znení novely 427/2013 Z.z.</a></p>
     <form id="{{ form.formid }}" method="{{ form.method }}" enctype="multipart/form-data" accept-charset="utf-8">
       <input type="hidden" name="_charset_" />
       <input type="hidden" name="__formid))" value="{{ form.formid }}" />
@@ -69,12 +68,38 @@
       {{ form.tvoriva_cinnost.render()|safe }}
 
       <h2>Profil kvality tvorivej činnosti</h2>
+      
+      <div class="panel panel-default">
+        <div class="panel-heading">Prehľad výstupov</div>
+        <div class="panel-body">
+          {{ render_field(form.vystup_wos_scopus) }}
+          {{ render_field(form.vystup_a) }}
+          {{ render_field(form.vystup_b) }}
+          {{ render_field(form.vystup_citacie) }}
+          {{ render_field(form.vystup_projekty) }}
+          {{ render_field(form.vystup_prednasky_medzinarodne) }}
+          {{ render_field(form.vystup_prednasky_narodne) }}
+        </div>
+      </div>
+
+      {{ form.najv_prace_celkom.render()|safe }}
+      {{ form.najv_prace_za_poslednych_6_rokov.render()|safe }}
+      {{ form.najv_projekty_za_poslednych_6_rokov.render()|safe }}
+      {{ form.vystupy_s_ohlasmi.render()|safe }}
+
+      {{ widget_in_panel(form.funkcie) }}
+      
       <h2>Doplňujúce informácie</h2>
+
+      {{ widget_in_panel(form.dopln_program) }}
+      {{ widget_in_panel(form.dopln_dalsie) }}
       
       <div class="form-group">
         <button type="submit" class="btn btn-primary">Uložiť</button>
       </div>
       
     </form>
+
+    {{ data }}
   </div></body>
 </html>
