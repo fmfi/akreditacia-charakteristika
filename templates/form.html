@@ -1,0 +1,123 @@
+{% from "macros.html" import render_field, render_errors, render_value_and_errors %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+  </head>
+  <body>
+    <h1>Vedecko-pedagogická charakteristika fyzickej osoby</h1>
+    <p>Tento formulár slúži na zozbieranie údajov pre potreby komplexnej akreditácie
+       a je zhotovený podľa prílohy č. 7 nariadenia vlády č. 104/2003 Z.z.</p>
+    <form>
+      <h2>Základné údaje</h2>
+      {{ render_field(form.titul_pred) }}
+      {{ render_field(form.priezvisko) }}
+      {{ render_field(form.meno) }}
+      {{ render_field(form.rok_narodenia) }}
+      {{ render_field(form.pracovisko) }}
+      {{ render_field(form.email) }}
+
+      <h2>Informácie o vysokoškolskom vzdelaní a ďaľšom kvalifikačnom raste</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Názov vysokej školy alebo inštitúcie</th>
+            <th>Rok</th>
+            <th>Odbor a program</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% macro vzd_field(label, field) %}
+            <tr>
+              <td>{{ label }}</td>
+              <td>{{ render_value_and_errors(field.nazov_skoly) }}</td>
+              <td>{{ render_value_and_errors(field.rok) }}</td>
+              <td>{{ render_value_and_errors(field.odbor_program) }}</td>
+            </tr>
+          {% endmacro %}
+          {{ vzd_field('Vysokoškolské vzdelanie druhého stupňa', form.vzd_druhy) }}
+          {{ vzd_field('Vysokoškolské vzdelanie tretieho stupňa', form.vzd_treti) }}
+          {{ vzd_field('Titul docent', form.vzd_docent) }}
+          {{ vzd_field('Titul profesor', form.vzd_profesor) }}
+          {{ vzd_field('Doktor vied', form.vzd_doktor_vied) }}
+          {{ vzd_field('Ďaľšie vzdelávanie', form.vzd_dalsie) }}
+        </tbody>
+      </table>
+
+      <h2>Zabezpečované činnosti</h2>
+      <h3>Prehľad o vedených záverečných prácach, ktoré boli obhájené</h3>
+      {{ render_field(form.veduci_bakalarske) }}
+      {{ render_field(form.veduci_diplomove) }}
+      {{ render_field(form.veduci_dizertacne) }}
+      
+      <h3>Aktuálna pedagogická činnosť</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Názov predmetu</th>
+            <th>Stupeň štúdia</th>
+            <th>Typ vzdelávacej činnosti</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cinnost in form.akt_pedag_cinnost %}
+            <tr>
+              <td>{{ render_value_and_errors(cinnost.nazov_predmetu) }}</td>
+              <td>{{ render_value_and_errors(cinnost.stupen_studia) }}</td>
+              <td>{{ render_value_and_errors(cinnost.typ_cinnosti) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>Predchádzajúca pedagogická činnosť</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Názov predmetu</th>
+            <th>Stupeň štúdia</th>
+            <th>Akademický rok</th>
+            <th>Typ vzdelávacej činnosti</th>
+            <th>Názov vysokej školy</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cinnost in form.predch_pedag_cinnost %}
+            <tr>
+              <td>{{ render_value_and_errors(cinnost.nazov_predmetu) }}</td>
+              <td>{{ render_value_and_errors(cinnost.stupen_studia) }}</td>
+              <td>{{ render_value_and_errors(cinnost.akademicky_rok) }}</td>
+              <td>{{ render_value_and_errors(cinnost.typ_cinnosti) }}</td>
+              <td>{{ render_value_and_errors(cinnost.skola) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>Aktuálna tvorivá činnosť</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Názov projektu</th>
+            <th>Vedúci projektu?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cinnost in form.tvoriva_cinnost %}
+            <tr>
+              <td>{{ render_value_and_errors(cinnost.nazov_projektu) }}</td>
+              <td>{{ render_value_and_errors(cinnost.veduci_projektu) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h2>Profil kvality tvorivej činnosti</h2>
+      <h2>Doplňujúce informácie</h2>
+    </form>
+  </body>
+</html>
