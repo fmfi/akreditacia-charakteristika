@@ -3,6 +3,8 @@ class Configuration(object):
     # tajny sifrovaci kluc
     self.secret = 'change this!'
 
+    self.document_dir = '.'
+
     ADMINS = ['email@example.com']
     if not app.debug:
       import logging
