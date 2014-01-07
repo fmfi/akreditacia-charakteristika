@@ -47,7 +47,8 @@ def index():
   user = request.remote_user
   if not user:
     return render_template('login.html')
-  return show_form('user-{}'.format(user))
+  logout_link = 'https://login.uniba.sk/logout.cgi?{}'.format(url_for('index', _external=True))
+  return show_form('user-{}'.format(user), user=user, logout_link=logout_link)
 
 @app.route('/login')
 def login():
@@ -84,7 +85,7 @@ def load_form(filename):
     else:
       raise
 
-def show_form(filename, metadata={}):
+def show_form(filename, metadata={}, **kwargs):
   loaded = load_form(filename)
   if loaded == None:
     data = {}
@@ -96,9 +97,9 @@ def show_form(filename, metadata={}):
     try:
       data = form.validate(controls)
     except ValidationFailure, e:
-      return render_template('form.html', form=form, data=data)
+      return render_template('form.html', form=form, data=data, **kwargs)
     save_form({'metadata': metadata, 'form': data}, filename)
-  return render_template('form.html', form=form, data=data)
+  return render_template('form.html', form=form, data=data, **kwargs)
 
 if __name__ == '__main__':
   import sys

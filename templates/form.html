@@ -18,9 +18,18 @@
         width: 50em;
         margin: 0 auto;
       }
+      .user-panel {
+        text-align: right;
+        margin-top: 0.5em;
+      }
     </style>
   </head>
   <body><div class="main-content">
+    {% if user %}
+    <div class="user-panel">
+    {{ user }} - <a href="{{ logout_link }}">Odhlásiť</a>
+    </div>
+    {% endif %}
     <h1>Vedecko-pedagogická charakteristika fyzickej osoby</h1>
     <p>Tento formulár slúži na zozbieranie údajov pre potreby komplexnej akreditácie
        a je zhotovený podľa <a href="http://www.zakonypreludi.sk/file/data/2013c100z427p07.pdf">prílohy č. 7</a> <a href="http://www.zakonypreludi.sk/zz/2003-104/znenie-20140101">nariadenia vlády č. 104/2003 Z.z. o akreditačnej komisii v znení novely 427/2013 Z.z.</a></p>
