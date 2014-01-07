@@ -27,7 +27,7 @@
   <body><div class="main-content">
     {% if user %}
     <div class="user-panel">
-    {{ user }} - <a href="{{ logout_link }}">Odhlásiť</a>
+    {{ user }} - <a href="{{ url_for('logout') }}">Odhlásiť</a>
     </div>
     {% endif %}
     <h1>Vedecko-pedagogická charakteristika fyzickej osoby</h1>

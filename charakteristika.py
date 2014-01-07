@@ -47,12 +47,20 @@ def index():
   user = request.remote_user
   if not user:
     return render_template('login.html')
-  logout_link = 'https://login.uniba.sk/logout.cgi?{}'.format(url_for('index', _external=True))
-  return show_form('user-{}'.format(user), user=user, logout_link=logout_link)
+  return show_form('user-{}'.format(user), user=user)
 
 @app.route('/login')
 def login():
   return redirect(url_for('index'))
+
+@app.route('/logout')
+def logout():
+  logout_link = 'https://login.uniba.sk/logout.cgi?{}'.format(url_for('index', _external=True))
+  response = current_app.make_response(redirect(logout_link))
+  if 'COSIGN_SERVICE' in request.environ:
+    response.set_cookie(request.environ['COSIGN_SERVICE'], value='',
+                        expire=1, path='/', secure=True)
+  return response
 
 @app.route('/<token:token>', methods=['POST', 'GET'])
 def using_token(token):
