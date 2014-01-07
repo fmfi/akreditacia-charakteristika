@@ -1,3 +1,4 @@
 Zavislosti:
 
-pip install Flask deform
+pip install Flask deform==2.0a2
+
