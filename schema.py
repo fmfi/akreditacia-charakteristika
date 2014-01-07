@@ -34,7 +34,7 @@ class Charakteristika(MappingSchema):
   meno = SchemaNode(String(), title=u'Meno')
   titul_za = SchemaNode(String(), title=u'Tituly za menom', missing='')
   rok_narodenia = SchemaNode(Integer(), title=u'Rok narodenia')
-  pracovisko = SchemaNode(String(), title=u'Názov a adresa pracoviska')
+  pracovisko = SchemaNode(String(), title=u'Názov a adresa pracoviska', widget=deform.widget.TextAreaWidget(rows=5))
   email = SchemaNode(String(), title=u'E-mail')
   vzd_druhy = Vzdelanie(title='Vysokoškolské vzdelanie druhého stupňa')
   vzd_treti = Vzdelanie(title='Vysokoškolské vzdelanie tretieho stupňa')
