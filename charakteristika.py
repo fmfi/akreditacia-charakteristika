@@ -71,6 +71,7 @@ def save_form(data, filename):
       os.unlink(tmpfilepath)
     except:
       pass
+    raise
 
 def load_form(filename):
   filepath = os.path.join(config.document_dir, '{}.json'.format(filename))
