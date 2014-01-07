@@ -5,7 +5,20 @@ import deform
 class Vzdelanie(MappingSchema):
   nazov_skoly = SchemaNode(String(), title=u'Názov vysokej školy alebo inštitúcie', missing='')
   rok = SchemaNode(Integer(), title=u'Rok', missing=0)
-  odbor_program = SchemaNode(String(), title=u'Odbor a program', missing='')
+  odbor_program = SchemaNode(String(), title=u'Odbor a program', missing='', description=u'Ak bolo vzdelanie získané v zahraničí, uvádza sa originálny názov študijného odboru a v zátvorke jeho preklad do štátneho jazyka.')
+
+class VzdelanieTitulDocent(MappingSchema):
+  nazov_skoly = SchemaNode(String(), title=u'Názov vysokej školy', missing='')
+  rok = SchemaNode(Integer(), title=u'Rok udelenia titulu', missing=0)
+
+class VzdelanieTitulProfesor(MappingSchema):
+  nazov_skoly = SchemaNode(String(), title=u'Názov vysokej školy', missing='')
+  rok = SchemaNode(Integer(), title=u'Rok', missing=0, description=u'Uvádza sa rok, kedy vysoká škola navrhla vymenovanie za profesora')
+
+class VzdelanieDoktorVied(MappingSchema):
+  nazov_skoly = SchemaNode(String(), title=u'Názov vysokej školy alebo inštitúcie', missing='')
+  rok = SchemaNode(Integer(), title=u'Rok', missing=0)
+  odbor_program = SchemaNode(String(), title=u'Vedný odbor', missing='')
 
 class PedagogickaCinnost(MappingSchema):
   nazov_predmetu = SchemaNode(String(), title=u'Názov predmetu')
@@ -24,8 +37,17 @@ class Vystup(MappingSchema):
   celkovo = SchemaNode(Integer(), title=u'Celkovo')
   za_poslednych_6_rokov = SchemaNode(Integer(), title=u'Za posledných šesť rokov')
 
+class VystupBiblio(MappingSchema):
+  popis = SchemaNode(String(), title='Bibliografické informácie')
+  vramci_pomeru_s = SchemaNode(String(), title='V rámci pracoveného pomeru s', description=u'Uvádza sa v rámci pracovného pomeru s ktorou právnickou osobou, predmetné výstupy vznikli, boli publikované, teda či ide o tvorbu v rámci vysokej školy, ktorá podáva žiadosť.')
+
+class VystupProjekt(MappingSchema):
+  popis = SchemaNode(String(), title='Informácie o projekte')
+  vramci_pomeru_s = SchemaNode(String(), title='V rámci pracoveného pomeru s', description=u'Uvádza sa v rámci pracovného pomeru s ktorou právnickou osobou, predmetné výstupy vznikli, boli publikované, teda či ide o tvorbu v rámci vysokej školy, ktorá podáva žiadosť.')
+
 class VystupSOhlasmi(MappingSchema):
-  bibliografia = SchemaNode(String(), title=u'Bibliografické informácie', widget=deform.widget.TextAreaWidget(rows=2))
+  popis = SchemaNode(String(), title=u'Bibliografické informácie', widget=deform.widget.TextAreaWidget(rows=2))
+  vramci_pomeru_s = SchemaNode(String(), title='V rámci pracoveného pomeru s', description=u'Uvádza sa v rámci pracovného pomeru s ktorou právnickou osobou, predmetné výstupy vznikli, boli publikované, teda či ide o tvorbu v rámci vysokej školy, ktorá podáva žiadosť.')
   ohlasy = SchemaNode(Sequence(), SchemaNode(String(), title='', name='ohlas', widget=deform.widget.TextAreaWidget(rows=2)), title=u'Ohlasy')
 
 class Charakteristika(MappingSchema):
@@ -34,13 +56,14 @@ class Charakteristika(MappingSchema):
   meno = SchemaNode(String(), title=u'Meno')
   titul_za = SchemaNode(String(), title=u'Tituly za menom', missing='')
   rok_narodenia = SchemaNode(Integer(), title=u'Rok narodenia')
-  pracovisko = SchemaNode(String(), title=u'Názov a adresa pracoviska', widget=deform.widget.TextAreaWidget(rows=5))
+  pracovisko = SchemaNode(String(), title=u'Názov a adresa pracoviska', widget=deform.widget.TextAreaWidget(rows=5),
+                          description=u'Uvádza sa konkrétna adresa pracoviska, v ktorom je vykonávaná práca pre vysokú školu, obvykle ide o adresu, na ktorej sa nachádza kancelária zamestnanca. Ak je výkon práce  na viacerých miestach ako napríklad sídlo vysokej školy a detašované pracoviská, uvádzajú sa všetky miesta. Viac lokalít sa neuvádza, ak má zamestnanec kanceláriu na jednej adrese, ale v rámci vysokej školy alebo fakulty zabezpečuje predmety v budovách vysokej školy na inej adrese v rámci tej istej obce.')
   email = SchemaNode(String(), title=u'E-mail')
   vzd_druhy = Vzdelanie(title='Vysokoškolské vzdelanie druhého stupňa')
   vzd_treti = Vzdelanie(title='Vysokoškolské vzdelanie tretieho stupňa')
-  vzd_docent = Vzdelanie(title='Titul docent')
-  vzd_profesor = Vzdelanie(title='Titul profesor')
-  vzd_doktor_vied = Vzdelanie(title='Doktor vied')
+  vzd_docent = VzdelanieTitulDocent(title='Titul docent')
+  vzd_profesor = VzdelanieTitulProfesor(title='Titul profesor')
+  vzd_doktor_vied = VzdelanieDoktorVied(title='Doktor vied')
   vzd_dalsie = SchemaNode(Sequence(), Vzdelanie(name='dalsie_vzdelanie', title=u'Ďaľšie vzdelanie'), title=u'Ďaľšie vzdelávanie')
   veduci_bakalarske = SchemaNode(Integer(), title=u'Počet vedených bakalárskych prác')
   veduci_diplomove = SchemaNode(Integer(), title=u'Počet vedených diplomových prác')
@@ -52,13 +75,13 @@ class Charakteristika(MappingSchema):
   vystup_a = Vystup(title='Počet výstupov kategórie A')
   vystup_b = Vystup(title='Počet výstupov kategórie B')
   vystup_citacie = Vystup(title='Počet citácií Web of Science alebo Scopus, v umeleckých študijných odboroch počet ohlasov v kategórii A')
-  vystup_projekty = Vystup(title='Počet projektov získaných na financovanie výskumu, tvorby')
+  vystup_projekty = Vystup(title='Počet projektov získaných na financovanie výskumu, tvorby', description=u'Uvádzajú sa len projekty, o ktorých financovaní rozhodla externá agentúra alebo inštitúcia, teda nebol financovaný v rámci grantovej schémy financovanej zo zdrojov vysokej školy. Výzva, v rámci ktorej bol projekt podporený musela byť otvorená, to je každý kto splnil zverejnené všeobecné kritériá musel mať možnosť požiadať o grant. Uvádzajú sa len projekty, kde bola osoba, o ktorej je charakteristika, zodpovedným riešiteľom alebo jeho zástupcom.')
   vystup_prednasky_medzinarodne = Vystup(title='Počet pozvaných prednášok na medzinárodnej úrovni')
   vystup_prednasky_narodne = Vystup(title='Počet pozvaných prednášok na národnej úrovni')
-  najv_prace_celkom = SchemaNode(Sequence(), SchemaNode(String(), name='najv_prace_celkom', title=''), title=u'Najvýznamnejšie publikované vedecké práce, verejne realizované alebo prezentované umelecké diela a výkony. Maximálne  päť.')
-  najv_prace_za_poslednych_6_rokov = SchemaNode(Sequence(), SchemaNode(String(), name='najv_prace_za_poslednych_6_rokov', title=''), title=u'Najvýznamnejšie publikované vedecké práce verejne realizované alebo prezentované umelecké diela alebo výkony za posledných šesť rokov. Maximálne päť výstupov.')
-  najv_projekty_za_poslednych_6_rokov = SchemaNode(Sequence(), SchemaNode(String(), name='najv_projekty_za_poslednych_6_rokov', title=''), title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov alebo umeleckých projektov za posledných  šesť rokov. Maximálne päť projektov.')
-  vystupy_s_ohlasmi = SchemaNode(Sequence(), VystupSOhlasmi(name='vystup_s_ohlasmi', title=u'Výstup s ohlasmi'), title=u'Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy. Maximálne päť výstupov a desať najvýznamnejších ohlasov na jeden výstup.')
+  najv_prace_celkom = SchemaNode(Sequence(), VystupBiblio(name='najv_prace_celkom', title=''), title=u'Najvýznamnejšie publikované vedecké práce, verejne realizované alebo prezentované umelecké diela a výkony.', description=u'Uvádza sa najviac päť výstupov.')
+  najv_prace_za_poslednych_6_rokov = SchemaNode(Sequence(), VystupBiblio(name='najv_prace_za_poslednych_6_rokov', title=''), title=u'Najvýznamnejšie publikované vedecké práce verejne realizované alebo prezentované umelecké diela alebo výkony za posledných šesť rokov.', description=u'Uvádza sa najviac päť výstupov.')
+  najv_projekty_za_poslednych_6_rokov = SchemaNode(Sequence(), VystupProjekt(name='najv_projekty_za_poslednych_6_rokov', title=''), title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov alebo umeleckých projektov za posledných šesť rokov.', description=u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov.')
+  vystupy_s_ohlasmi = SchemaNode(Sequence(), VystupSOhlasmi(name='vystup_s_ohlasmi', title=u'Výstup s ohlasmi'), title=u'Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy.', description=u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch.')
   funkcie = SchemaNode(String(), title=u'Funkcie a členstvo vo vedeckých, odborných a profesijných spoločnostiach', widget=deform.widget.TextAreaWidget(rows=10), missing='')
-  dopln_program = SchemaNode(String(), title=u'Charakteristika aktivít súvisiacich s príslušným študijným programom', widget=deform.widget.TextAreaWidget(rows=5), missing='')
-  dopln_dalsie = SchemaNode(String(), title=u'Ďalšie aktivity', widget=deform.widget.TextAreaWidget(rows=5), missing='')
+  dopln_program = SchemaNode(String(), title=u'Charakteristika aktivít súvisiacich s príslušným študijným programom', widget=deform.widget.TextAreaWidget(rows=5), missing='', description=u'Uvádza sa len u garanta a spolugaranta študijného programu. Zabezpečované aktivity by mali preukázať, že garant má podstatný vplyv na uskutočňovanie študijného programu. Maximálne 3500 znakov.')
+  dopln_dalsie = SchemaNode(String(), title=u'Ďalšie aktivity', widget=deform.widget.TextAreaWidget(rows=5), missing='', description=u'Ak je to podstatné, uvádzajú sa iné aktivity súvisiace s vysokoškolským vzdelávaním alebo tvorivou činnosťou. Maximálne 3500 znakov.')

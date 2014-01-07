@@ -25,7 +25,9 @@
       <label for="{{ field.oid }}" class="control-label {{ 'required' if field.required }}">{{ field.title }}</label>
     {% endif %}
     {{ render_value_and_errors(field) }}
+    {% if not (field.widget.hidden or field.widget.category == 'structural') %}
     {{ render_description(field) }}
+    {% endif %}
   </div>
 {% endmacro %}
 

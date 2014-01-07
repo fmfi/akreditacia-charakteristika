@@ -65,6 +65,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Prehľad o vedených záverečných prácach, ktoré boli obhájené</div>
         <div class="panel-body">
+          <p class="help-block">Uvádza sa počet záverečných prác, ktoré boli vedené z pozície školiteľa a ktoré boli úspešne obhájené.</p>
           {{ render_field(form.veduci_bakalarske) }}
           {{ render_field(form.veduci_diplomove) }}
           {{ render_field(form.veduci_dizertacne) }}
@@ -81,6 +82,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Prehľad výstupov</div>
         <div class="panel-body">
+          <p class="help-block">Rok sa posudzuje v závislosti od roku vydania, ak ide o ohlasy posudzuje sa od roku vydania publikácie, ktorá je ohlasom na výstup, ak ide o projekty posudzuje sa v závislosti od roku, v ktorom sa začal projekt uskutočňovať.</p>
           {{ render_field(form.vystup_wos_scopus) }}
           {{ render_field(form.vystup_a) }}
           {{ render_field(form.vystup_b) }}
