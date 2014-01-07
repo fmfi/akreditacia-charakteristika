@@ -59,7 +59,7 @@ def logout():
   response = app.make_response(redirect(logout_link))
   if 'COSIGN_SERVICE' in request.environ:
     response.set_cookie(request.environ['COSIGN_SERVICE'], value='',
-                        expire=1, path='/', secure=True)
+                        expires=1, path='/', secure=True)
   return response
 
 @app.route('/<token:token>', methods=['POST', 'GET'])
