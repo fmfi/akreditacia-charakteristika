@@ -56,7 +56,7 @@ def login():
 @app.route('/logout')
 def logout():
   logout_link = 'https://login.uniba.sk/logout.cgi?{}'.format(url_for('index', _external=True))
-  response = current_app.make_response(redirect(logout_link))
+  response = app.make_response(redirect(logout_link))
   if 'COSIGN_SERVICE' in request.environ:
     response.set_cookie(request.environ['COSIGN_SERVICE'], value='',
                         expire=1, path='/', secure=True)
