@@ -17,6 +17,7 @@ from deform.exception import ValidationFailure
 import json
 import os
 import os.path
+import ldap
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -97,6 +98,15 @@ def show_form(filename, metadata={}, **kwargs):
   loaded = load_form(filename)
   if loaded == None:
     data = {}
+    f request.remote_user:
+      ldap_result = query_ldap(request.remote_user)
+      if ldap_result:
+        data = {
+          'titul_pred': ldap_result[0],
+          'meno': ldap_result[1],
+          'priezvisko': ldap_result[2],
+          'titul_za': ldap_result[3],
+        }
   else:
     data = loaded['form']
   form = Form(Charakteristika(), buttons=('submit',), appstruct=data)
@@ -109,6 +119,36 @@ def show_form(filename, metadata={}, **kwargs):
     save_form({'metadata': metadata, 'form': data}, filename)
   return render_template('form.html', form=form, data=data, **kwargs)
 
+def ldap_escape(s):
+  """Escape LDAP filter value
+     @see http://www.ietf.org/rfc/rfc2254.txt
+  """
+  r = ''
+  for c in s:
+    if c in ('*', '(', ')', '\\', "\0"):
+      r += '\\' + hex(ord(c))[2:].zfill(2)
+    else:
+      r += c
+  return r
+
+def query_ldap(user):
+  l = ldap.initialize('ldaps://jas2.uniba.sk,ldaps://jas1.uniba.sk')
+  l.protocol_version = 3
+  l.simple_bind_s()
+  result = l.search_s('dc=uniba,dc=sk', ldap.SCOPE_SUBTREE, filterstr='(uid={})'.format(ldap_escape(user)))
+  if len(result) == 0:
+    return None
+  elif len(result) > 1:
+    raise ValueError('Multiple results for username {}'.format(user))
+  def field(name):
+    return result[0][1][name][0].decode('UTF-8')
+  display_name = field('displayName')
+  given_name = field('givenNameU8')
+  surname = field('snU8')
+  tituly_pred = display_name[:display_name.index(given_name)].strip()
+  tituly_za = display_name[display_name.index(surname)+len(surname):].lstrip(',').strip()
+  return tituly_pred, given_name, surname, tituly_za
+
 if __name__ == '__main__':
   import sys
 
@@ -120,5 +160,7 @@ if __name__ == '__main__':
         server.start()
     except KeyboardInterrupt:
         server.stop()
+  elif len(sys.argv) == 3 and sys.argv[1] == 'ldap':
+    print repr(query_ldap(sys.argv[2]))
   else:
     app.run() # werkzeug
