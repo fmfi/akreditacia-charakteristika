@@ -98,7 +98,7 @@ def show_form(filename, metadata={}, **kwargs):
   loaded = load_form(filename)
   if loaded == None:
     data = {}
-    f request.remote_user:
+    if request.remote_user:
       ldap_result = query_ldap(request.remote_user)
       if ldap_result:
         data = {
