@@ -18,6 +18,7 @@ import json
 import os
 import os.path
 import ldap
+from pkg_resources import resource_filename
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -35,6 +36,11 @@ app.secret_key = config.secret
 
 deform_bp = Blueprint('deform', 'deform', static_folder='static', url_prefix='/deform')
 app.register_blueprint(deform_bp)
+
+form_deform_templates = resource_filename('deform', 'templates')
+form_my_templates = resource_filename(__name__, 'templates')
+form_template_path = (form_my_templates, form_deform_templates)
+Form.set_zpt_renderer(form_template_path)
 
 class FormTokenConverter(BaseConverter):
   def __init__(self, url_map, *items):
