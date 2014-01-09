@@ -85,7 +85,7 @@ class Vystup(MappingSchema):
     title=u'Celkovo'
   )
   za_poslednych_6_rokov = SchemaNode(Integer(),
-    title=u'Za posledných šesť rokov'
+    title=u'Za posledných šesť rokov (2008-2013)'
   )
 
 class VystupBiblio(MappingSchema):
@@ -248,7 +248,7 @@ class Charakteristika(MappingSchema):
       name='najv_prace_za_poslednych_6_rokov',
       title=''
     ),
-    title=u'Najvýznamnejšie publikované vedecké práce verejne realizované alebo prezentované umelecké diela alebo výkony za posledných šesť rokov.',
+    title=u'Najvýznamnejšie publikované vedecké práce verejne realizované alebo prezentované umelecké diela alebo výkony v rokoch 2008-2013.',
     description=u'Uvádza sa najviac päť výstupov.',
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -258,7 +258,7 @@ class Charakteristika(MappingSchema):
       name='najv_projekty_za_poslednych_6_rokov',
       title=''
     ),
-    title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov alebo umeleckých projektov za posledných šesť rokov.',
+    title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov alebo umeleckých projektov v rokoch 2008-2013.',
     description=u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov.',
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -269,7 +269,7 @@ class Charakteristika(MappingSchema):
       title=u'Výstup s ohlasmi'
     ),
     title=u'Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy.',
-    description=u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch.',
+    description=u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2008-2013).',
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
