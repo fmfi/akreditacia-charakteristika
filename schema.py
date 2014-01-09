@@ -92,28 +92,16 @@ class VystupBiblio(MappingSchema):
   popis = SchemaNode(String(),
     title='Bibliografické informácie'
   )
-  vramci_pomeru_s = SchemaNode(String(),
-    title='V rámci pracoveného pomeru s',
-    description=u'Uvádza sa v rámci pracovného pomeru s ktorou právnickou osobou, predmetné výstupy vznikli, boli publikované, teda či ide o tvorbu v rámci vysokej školy, ktorá podáva žiadosť.'
-  )
 
 class VystupProjekt(MappingSchema):
   popis = SchemaNode(String(),
     title='Informácie o projekte'
-  )
-  vramci_pomeru_s = SchemaNode(String(),
-    title='V rámci pracoveného pomeru s',
-    description=u'Uvádza sa v rámci pracovného pomeru s ktorou právnickou osobou, predmetné výstupy vznikli, boli publikované, teda či ide o tvorbu v rámci vysokej školy, ktorá podáva žiadosť.'
   )
 
 class VystupSOhlasmi(MappingSchema):
   popis = SchemaNode(String(),
     title=u'Bibliografické informácie',
     widget=deform.widget.TextAreaWidget(rows=2)
-  )
-  vramci_pomeru_s = SchemaNode(String(),
-    title='V rámci pracoveného pomeru s',
-    description=u'Uvádza sa v rámci pracovného pomeru s ktorou právnickou osobou, predmetné výstupy vznikli, boli publikované, teda či ide o tvorbu v rámci vysokej školy, ktorá podáva žiadosť.'
   )
   ohlasy = SchemaNode(Sequence(),
     SchemaNode(String(),
