@@ -146,11 +146,13 @@ class Charakteristika(MappingSchema):
   )
   pracovisko = SchemaNode(String(),
     title=u'Názov a adresa pracoviska',
+    default=u'Univerzita Komenského v Bratislave\nFakulta matematiky, fyziky a informatiky\nMlynská dolina\n842 48 Bratislava',
     widget=deform.widget.TextAreaWidget(rows=5),
     description=u'Uvádza sa konkrétna adresa pracoviska, v ktorom je vykonávaná práca pre vysokú školu, obvykle ide o adresu, na ktorej sa nachádza kancelária zamestnanca. Ak je výkon práce  na viacerých miestach ako napríklad sídlo vysokej školy a detašované pracoviská, uvádzajú sa všetky miesta. Viac lokalít sa neuvádza, ak má zamestnanec kanceláriu na jednej adrese, ale v rámci vysokej školy alebo fakulty zabezpečuje predmety v budovách vysokej školy na inej adrese v rámci tej istej obce.'
   )
   email = SchemaNode(String(),
-    title=u'E-mail'
+    title=u'E-mail',
+    default='@fmph.uniba.sk'
   )
   vzd_druhy = Vzdelanie(
     title='Vysokoškolské vzdelanie druhého stupňa'
