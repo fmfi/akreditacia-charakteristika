@@ -90,12 +90,14 @@ class Vystup(MappingSchema):
 
 class VystupBiblio(MappingSchema):
   popis = SchemaNode(String(),
-    title=u'Bibliografické informácie'
+    title=u'Bibliografické informácie',
+    widget=deform.widget.TextAreaWidget(rows=2)
   )
 
 class VystupProjekt(MappingSchema):
   popis = SchemaNode(String(),
-    title=u'Informácie o projekte'
+    title=u'Informácie o projekte',
+    widget=deform.widget.TextAreaWidget(rows=2)
   )
 
 class VystupSOhlasmi(MappingSchema):
@@ -103,15 +105,10 @@ class VystupSOhlasmi(MappingSchema):
     title=u'Bibliografické informácie',
     widget=deform.widget.TextAreaWidget(rows=2)
   )
-  ohlasy = SchemaNode(Sequence(),
-    SchemaNode(String(),
-      title=u'',
-      name='ohlas',
-      widget=deform.widget.TextAreaWidget(rows=2)
-    ),
+  ohlasy = SchemaNode(String(),
     title=u'Ohlasy',
-    validator=Length(max=10),
-    widget=deform.widget.SequenceWidget(max_len=10)
+    name='ohlas',
+    widget=deform.widget.TextAreaWidget(rows=10)
   )
 
 class Charakteristika(MappingSchema):
