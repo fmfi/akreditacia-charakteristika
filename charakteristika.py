@@ -20,6 +20,7 @@ import os.path
 import ldap
 from pkg_resources import resource_filename
 import colander
+import time
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -136,10 +137,13 @@ def form_messages(form):
     errors.append((u'/'.join(titlepath), messages))
   return errors
 
-def show_form(filename, metadata={}, **kwargs):
+def show_form(filename, metadata_default={}, **kwargs):
+  now = time.time()
   loaded = load_form(filename)
   if loaded == None:
     data = {}
+    metadata = {'created': now}
+    metadata.update(metadata_default)
     if request.remote_user:
       ldap_result = query_ldap(request.remote_user)
       if ldap_result:
@@ -151,6 +155,7 @@ def show_form(filename, metadata={}, **kwargs):
         }
   else:
     data = loaded['form']
+    metadata = loaded['metadata']
   form = Form(Charakteristika(), buttons=('submit',), appstruct=data)
   saved = False
   if request.method == 'POST':
@@ -159,6 +164,7 @@ def show_form(filename, metadata={}, **kwargs):
       data = form.validate(controls)
     except ValidationFailure, e:
       pass
+    metadata['updated'] = now
     save_form({'metadata': metadata, 'form': data, 'cstruct': form.cstruct}, filename)
     saved = True
   else:
