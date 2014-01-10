@@ -204,7 +204,7 @@ class Charakteristika(MappingSchema):
       title=u'Tvorivá činnosť'
     ),
     title=u'Aktuálna tvorivá činnosť',
-    description=u'Uvádza sa zoznam aktuálnych výskumných projektov alebo umeleckých projektov, na ktorých riešení zamestnanec participuje. Ak ide o vedúceho projektu, uvádza sa táto skutočnosť osobitne. Je možné uviesť aj výskumné projekty pre hospodársku sféru.'
+    description=u'Uvádza sa zoznam aktuálnych výskumných projektov, na ktorých riešení zamestnanec participuje. Ak ide o vedúceho projektu, uvádza sa táto skutočnosť osobitne. Je možné uviesť aj výskumné projekty pre hospodársku sféru.'
   )
   vystup_wos_scopus = Vystup(
     title=u'Počet výstupov evidovaných vo Web of Science alebo Scopus'
@@ -216,7 +216,7 @@ class Charakteristika(MappingSchema):
     title=u'Počet výstupov kategórie B'
   )
   vystup_citacie = Vystup(
-    title=u'Počet citácií Web of Science alebo Scopus, v umeleckých študijných odboroch počet ohlasov v kategórii A'
+    title=u'Počet citácií Web of Science alebo Scopus'
   )
   vystup_projekty = Vystup(
     title=u'Počet projektov získaných na financovanie výskumu, tvorby',
@@ -233,7 +233,7 @@ class Charakteristika(MappingSchema):
       name='najv_prace_celkom',
       title=u''
     ),
-    title=u'Najvýznamnejšie publikované vedecké práce, verejne realizované alebo prezentované umelecké diela a výkony.',
+    title=u'Najvýznamnejšie publikované vedecké práce, ktoré vznikli v pracovnom pomere s UK.',
     description=u'Uvádza sa najviac päť výstupov.',
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -243,7 +243,7 @@ class Charakteristika(MappingSchema):
       name='najv_prace_za_poslednych_6_rokov',
       title=u''
     ),
-    title=u'Najvýznamnejšie publikované vedecké práce verejne realizované alebo prezentované umelecké diela alebo výkony v rokoch 2008-2013.',
+    title=u'Najvýznamnejšie publikované vedecké práce v rokoch 2008-2013, ktoré vznikli v pracovnom pomere s UK.',
     description=u'Uvádza sa najviac päť výstupov.',
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -253,7 +253,7 @@ class Charakteristika(MappingSchema):
       name='najv_projekty_za_poslednych_6_rokov',
       title=u''
     ),
-    title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov alebo umeleckých projektov v rokoch 2008-2013.',
+    title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2008-2013.',
     description=u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov.',
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
