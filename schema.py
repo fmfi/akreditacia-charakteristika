@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from colander import MappingSchema, SchemaNode, String, Integer, Bool, Sequence, Length
+from colander import MappingSchema, SchemaNode, String, Integer, Bool, Sequence, Length, Email
 import colander
 import deform
 
@@ -146,7 +146,8 @@ class Charakteristika(MappingSchema):
   email = SchemaNode(String(),
     title=u'E-mail',
     default='@fmph.uniba.sk',
-    preparer=fmph_email_preparer
+    preparer=fmph_email_preparer,
+    validator=Email()
   )
   vzd_druhy = Vzdelanie(
     title=u'Vysokoškolské vzdelanie druhého stupňa'
