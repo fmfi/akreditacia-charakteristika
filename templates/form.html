@@ -38,6 +38,10 @@
       <input type="hidden" name="_charset_" />
       <input type="hidden" name="__formid))" value="{{ form.formid }}" />
 
+      {% if saved %}
+      <div class="alert alert-success">Dáta boli uložené</div>
+      {% endif %}
+
       {% if form.error or messages %}
       <div class="alert alert-danger">
         <div class="errorMsgLbl">Formulár sa nepodarilo zvalidovať. Prosím skontrolujte vyplnené údaje.</div>

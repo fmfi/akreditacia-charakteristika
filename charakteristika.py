@@ -152,6 +152,7 @@ def show_form(filename, metadata={}, **kwargs):
   else:
     data = loaded['form']
   form = Form(Charakteristika(), buttons=('submit',), appstruct=data)
+  saved = False
   if request.method == 'POST':
     controls = request.form.items(multi=True)
     try:
@@ -159,6 +160,7 @@ def show_form(filename, metadata={}, **kwargs):
     except ValidationFailure, e:
       pass
     save_form({'metadata': metadata, 'form': data, 'cstruct': form.cstruct}, filename)
+    saved = True
   else:
     if loaded and 'cstruct' in loaded:
       form.cstruct = loaded['cstruct']
@@ -166,7 +168,7 @@ def show_form(filename, metadata={}, **kwargs):
         data = form.schema.deserialize(form.cstruct)
       except colander.Invalid as e:
         form.widget.handle_error(form, e)
-  return render_template('form.html', form=form, data=data, messages=form_messages(form), **kwargs)
+  return render_template('form.html', form=form, data=data, messages=form_messages(form), saved=saved, **kwargs)
 
 def ldap_escape(s):
   """Escape LDAP filter value
