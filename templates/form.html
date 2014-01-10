@@ -18,6 +18,19 @@
         width: 50em;
         margin: 0 auto;
       }
+      .fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: white;
+        color: black;
+        border-top: 1px solid #ddd;
+        box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.05);
+        padding: 1em 0;
+      }
+      .footer-space {
+        margin-bottom: 7em;
+      }
       .user-panel {
         text-align: right;
         margin-top: 0.5em;
@@ -37,7 +50,9 @@
     <p>Tento formulár slúži na zozbieranie údajov pre potreby komplexnej akreditácie
        a je zhotovený podľa <a href="http://www.zakonypreludi.sk/file/data/2013c100z427p07.pdf">prílohy č. 7</a> <a href="http://www.zakonypreludi.sk/zz/2003-104/znenie-20140101">nariadenia vlády č. 104/2003 Z.z. o akreditačnej komisii v znení novely 427/2013 Z.z.</a></p>
     <p>Dáta vo formulári sa vypĺňajú tak, aby údaje zodpovedali ku dňu 31.12.2013</p>
+    </div>
     <form id="{{ form.formid }}" method="{{ form.method }}" enctype="multipart/form-data" accept-charset="utf-8">
+      <div class="main-content footer-space">
       <input type="hidden" name="_charset_" />
       <input type="hidden" name="__formid))" value="{{ form.formid }}" />
 
@@ -120,10 +135,10 @@
       {{ widget_in_panel(form.dopln_program) }}
       {{ widget_in_panel(form.dopln_dalsie) }}
       
-      <div class="form-group">
-        <button type="submit" class="btn btn-primary">Uložiť</button>
       </div>
-      
+      <div class="fixed-bottom"><div class="main-content">
+        <button type="submit" class="btn btn-primary">Uložiť</button>
+      </div></div>
     </form>
-  </div></body>
+  </body>
 </html>
