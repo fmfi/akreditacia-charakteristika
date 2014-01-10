@@ -119,7 +119,7 @@ def form_messages(form):
   
   def title(exc):
     if exc.positional:
-      return unicode(exc.pos)
+      return u'{}.'.format(exc.pos + 1)
     if exc.node.title == None or exc.node.title == u'':
       return None
     return unicode(exc.node.title)
@@ -134,7 +134,7 @@ def form_messages(form):
       tit = title(exc)
       if tit != None:
         titlepath.append(tit)
-    errors.append((u'/'.join(titlepath), messages))
+    errors.append((u' – '.join(titlepath), messages))
   return errors
 
 def show_form(filename, metadata_default={}, **kwargs):
