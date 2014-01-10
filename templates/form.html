@@ -40,7 +40,7 @@
 
       {% if form.error %}
       <div class="alert alert-danger">
-        <div class="errorMsgLbl">Vyskytol sa problém pri odosielaní formuláru, prosím skontrolujte vyplnené údaje</div>
+        <div class="errorMsgLbl">Formulár sa nepodarilo zvalidovať. Prosím skontrolujte vyplnené údaje.</div>
         <p class="errorMsg">{{ form.errormsg or '' }}</p>
       </div>
       {% endif %}

@@ -19,6 +19,7 @@ import os
 import os.path
 import ldap
 from pkg_resources import resource_filename
+import colander
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -73,12 +74,23 @@ def logout():
 def using_token(token):
   return show_form('token-{}'.format(token), {'token':token})
 
+class MyJsonEncoder(json.JSONEncoder):
+  def default(self, obj):
+    if obj == colander.null:
+      return {'__colander': 'null'}
+    return super(CstructJsonEncoder, self).default(obj)
+
+def object_hook(obj):
+  if '__colander' in obj and obj['__colander'] == 'null':
+    return colander.null
+  return obj
+
 def save_form(data, filename):
   filepath = os.path.join(config.document_dir, '{}.json'.format(filename))
   tmpfilepath = os.path.join(config.document_dir, '{}.json.part'.format(filename))
   try:
     with open(tmpfilepath, 'w+') as f:
-      json.dump(data, f)
+      json.dump(data, f, cls=MyJsonEncoder)
       f.flush()
       os.fsync(f.fileno())
     os.rename(tmpfilepath, filepath)
@@ -93,7 +105,7 @@ def load_form(filename):
   filepath = os.path.join(config.document_dir, '{}.json'.format(filename))
   try:
     with open(filepath, 'r') as f:
-      return json.load(f)
+      return json.load(f, object_hook=object_hook)
   except IOError, e:
     if e.errno == 2: # neexistuje
       return None
@@ -121,8 +133,15 @@ def show_form(filename, metadata={}, **kwargs):
     try:
       data = form.validate(controls)
     except ValidationFailure, e:
-      return render_template('form.html', form=form, data=data, **kwargs)
-    save_form({'metadata': metadata, 'form': data}, filename)
+      pass
+    save_form({'metadata': metadata, 'form': data, 'cstruct': form.cstruct}, filename)
+  else:
+    if loaded and 'cstruct' in loaded:
+      form.cstruct = loaded['cstruct']
+      try:
+        data = form.schema.deserialize(form.cstruct)
+      except colander.Invalid as e:
+        form.widget.handle_error(form, e)
   return render_template('form.html', form=form, data=data, **kwargs)
 
 def ldap_escape(s):
