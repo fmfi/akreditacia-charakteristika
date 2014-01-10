@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 from colander import MappingSchema, SchemaNode, String, Integer, Bool, Sequence, Length
+import colander
 import deform
+
+def fmph_email_preparer(value):
+  if value == colander.null:
+    return value
+  if value == '@fmph.uniba.sk':
+    return colander.null
+  return value
 
 class Vzdelanie(MappingSchema):
   nazov_skoly = SchemaNode(String(),
@@ -137,7 +145,8 @@ class Charakteristika(MappingSchema):
   )
   email = SchemaNode(String(),
     title=u'E-mail',
-    default='@fmph.uniba.sk'
+    default='@fmph.uniba.sk',
+    preparer=fmph_email_preparer
   )
   vzd_druhy = Vzdelanie(
     title=u'Vysokoškolské vzdelanie druhého stupňa'
