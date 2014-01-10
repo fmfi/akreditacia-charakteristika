@@ -38,10 +38,17 @@
       <input type="hidden" name="_charset_" />
       <input type="hidden" name="__formid))" value="{{ form.formid }}" />
 
-      {% if form.error %}
+      {% if form.error or messages %}
       <div class="alert alert-danger">
         <div class="errorMsgLbl">Formulár sa nepodarilo zvalidovať. Prosím skontrolujte vyplnené údaje.</div>
-        <p class="errorMsg">{{ form.errormsg or '' }}</p>
+        {% if messages %}
+          <p>Nasledovné polia ešte treba doplniť alebo opraviť:</p>
+          <ul>
+          {% for fieldname, fieldmsgs in messages %}
+            <li>{{ fieldname }}: {{ fieldmsgs|join('; ') }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
       </div>
       {% endif %}
       

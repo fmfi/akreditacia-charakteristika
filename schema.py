@@ -90,12 +90,12 @@ class Vystup(MappingSchema):
 
 class VystupBiblio(MappingSchema):
   popis = SchemaNode(String(),
-    title='Bibliografické informácie'
+    title=u'Bibliografické informácie'
   )
 
 class VystupProjekt(MappingSchema):
   popis = SchemaNode(String(),
-    title='Informácie o projekte'
+    title=u'Informácie o projekte'
   )
 
 class VystupSOhlasmi(MappingSchema):
@@ -105,7 +105,7 @@ class VystupSOhlasmi(MappingSchema):
   )
   ohlasy = SchemaNode(Sequence(),
     SchemaNode(String(),
-      title='',
+      title=u'',
       name='ohlas',
       widget=deform.widget.TextAreaWidget(rows=2)
     ),
@@ -143,19 +143,19 @@ class Charakteristika(MappingSchema):
     default='@fmph.uniba.sk'
   )
   vzd_druhy = Vzdelanie(
-    title='Vysokoškolské vzdelanie druhého stupňa'
+    title=u'Vysokoškolské vzdelanie druhého stupňa'
   )
   vzd_treti = Vzdelanie(
-    title='Vysokoškolské vzdelanie tretieho stupňa'
+    title=u'Vysokoškolské vzdelanie tretieho stupňa'
   )
   vzd_docent = VzdelanieTitulDocent(
-    title='Titul docent'
+    title=u'Titul docent'
   )
   vzd_profesor = VzdelanieTitulProfesor(
-    title='Titul profesor'
+    title=u'Titul profesor'
   )
   vzd_doktor_vied = VzdelanieDoktorVied(
-    title='Doktor vied'
+    title=u'Doktor vied'
   )
   vzd_dalsie = SchemaNode(Sequence(),
     Vzdelanie(
@@ -200,31 +200,31 @@ class Charakteristika(MappingSchema):
     description=u'Uvádza sa zoznam aktuálnych výskumných projektov alebo umeleckých projektov, na ktorých riešení zamestnanec participuje. Ak ide o vedúceho projektu, uvádza sa táto skutočnosť osobitne. Je možné uviesť aj výskumné projekty pre hospodársku sféru.'
   )
   vystup_wos_scopus = Vystup(
-    title='Počet výstupov evidovaných vo Web of Science alebo Scopus'
+    title=u'Počet výstupov evidovaných vo Web of Science alebo Scopus'
   )
   vystup_a = Vystup(
-    title='Počet výstupov kategórie A'
+    title=u'Počet výstupov kategórie A'
   )
   vystup_b = Vystup(
-    title='Počet výstupov kategórie B'
+    title=u'Počet výstupov kategórie B'
   )
   vystup_citacie = Vystup(
-    title='Počet citácií Web of Science alebo Scopus, v umeleckých študijných odboroch počet ohlasov v kategórii A'
+    title=u'Počet citácií Web of Science alebo Scopus, v umeleckých študijných odboroch počet ohlasov v kategórii A'
   )
   vystup_projekty = Vystup(
-    title='Počet projektov získaných na financovanie výskumu, tvorby',
+    title=u'Počet projektov získaných na financovanie výskumu, tvorby',
     description=u'Uvádzajú sa len projekty, o ktorých financovaní rozhodla externá agentúra alebo inštitúcia, teda nebol financovaný v rámci grantovej schémy financovanej zo zdrojov vysokej školy. Výzva, v rámci ktorej bol projekt podporený musela byť otvorená, to je každý kto splnil zverejnené všeobecné kritériá musel mať možnosť požiadať o grant. Uvádzajú sa len projekty, kde bola osoba, o ktorej je charakteristika, zodpovedným riešiteľom alebo jeho zástupcom.'
   )
   vystup_prednasky_medzinarodne = Vystup(
-    title='Počet pozvaných prednášok na medzinárodnej úrovni'
+    title=u'Počet pozvaných prednášok na medzinárodnej úrovni'
   )
   vystup_prednasky_narodne = Vystup(
-    title='Počet pozvaných prednášok na národnej úrovni'
+    title=u'Počet pozvaných prednášok na národnej úrovni'
   )
   najv_prace_celkom = SchemaNode(Sequence(),
     VystupBiblio(
       name='najv_prace_celkom',
-      title=''
+      title=u''
     ),
     title=u'Najvýznamnejšie publikované vedecké práce, verejne realizované alebo prezentované umelecké diela a výkony.',
     description=u'Uvádza sa najviac päť výstupov.',
@@ -234,7 +234,7 @@ class Charakteristika(MappingSchema):
   najv_prace_za_poslednych_6_rokov = SchemaNode(Sequence(),
     VystupBiblio(
       name='najv_prace_za_poslednych_6_rokov',
-      title=''
+      title=u''
     ),
     title=u'Najvýznamnejšie publikované vedecké práce verejne realizované alebo prezentované umelecké diela alebo výkony v rokoch 2008-2013.',
     description=u'Uvádza sa najviac päť výstupov.',
@@ -244,7 +244,7 @@ class Charakteristika(MappingSchema):
   najv_projekty_za_poslednych_6_rokov = SchemaNode(Sequence(),
     VystupProjekt(
       name='najv_projekty_za_poslednych_6_rokov',
-      title=''
+      title=u''
     ),
     title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov alebo umeleckých projektov v rokoch 2008-2013.',
     description=u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov.',

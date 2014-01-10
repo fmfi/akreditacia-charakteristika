@@ -112,6 +112,30 @@ def load_form(filename):
     else:
       raise
 
+def form_messages(form):
+  if not form.error:
+    return None
+  
+  def title(exc):
+    if exc.positional:
+      return unicode(exc.pos)
+    if exc.node.title == None or exc.node.title == u'':
+      return None
+    return unicode(exc.node.title)
+  
+  errors = []
+  for path in form.error.paths():
+    titlepath = []
+    messages = []
+    for exc in path:
+      if exc.msg:
+        messages.extend(exc.messages())
+      tit = title(exc)
+      if tit != None:
+        titlepath.append(tit)
+    errors.append((u'/'.join(titlepath), messages))
+  return errors
+
 def show_form(filename, metadata={}, **kwargs):
   loaded = load_form(filename)
   if loaded == None:
@@ -142,7 +166,7 @@ def show_form(filename, metadata={}, **kwargs):
         data = form.schema.deserialize(form.cstruct)
       except colander.Invalid as e:
         form.widget.handle_error(form, e)
-  return render_template('form.html', form=form, data=data, **kwargs)
+  return render_template('form.html', form=form, data=data, messages=form_messages(form), **kwargs)
 
 def ldap_escape(s):
   """Escape LDAP filter value
