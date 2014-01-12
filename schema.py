@@ -2,6 +2,7 @@
 from colander import MappingSchema, SchemaNode, String, Integer, Bool, Sequence, Length, Email
 import colander
 import deform
+from chameleon.utils import Markup
 
 def fmph_email_preparer(value):
   if value == colander.null:
@@ -233,8 +234,8 @@ class Charakteristika(MappingSchema):
       name='najv_prace_celkom',
       title=u''
     ),
-    title=u'Najvýznamnejšie publikované vedecké práce, ktoré vznikli v pracovnom pomere s UK.',
-    description=u'Uvádza sa najviac päť výstupov.',
+    title=u'Najvýznamnejšie publikované vedecké práce',
+    description=Markup(u'Uvádza sa najviac päť výstupov, <strong>ktoré vznikli v pracovnom pomere s UK</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
@@ -243,8 +244,8 @@ class Charakteristika(MappingSchema):
       name='najv_prace_za_poslednych_6_rokov',
       title=u''
     ),
-    title=u'Najvýznamnejšie publikované vedecké práce v rokoch 2008-2013, ktoré vznikli v pracovnom pomere s UK.',
-    description=u'Uvádza sa najviac päť výstupov.',
+    title=u'Najvýznamnejšie publikované vedecké práce v rokoch 2008-2013',
+    description=Markup(u'Uvádza sa najviac päť výstupov, <strong>ktoré vznikli v pracovnom pomere s UK</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
@@ -253,8 +254,8 @@ class Charakteristika(MappingSchema):
       name='najv_projekty_za_poslednych_6_rokov',
       title=u''
     ),
-    title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2008-2013.',
-    description=u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov.',
+    title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2008-2013',
+    description=Markup(u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov, <strong>ktoré vznikli v pracovnom pomere s UK</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
@@ -263,8 +264,8 @@ class Charakteristika(MappingSchema):
       name='vystup_s_ohlasmi',
       title=u'Výstup s ohlasmi'
     ),
-    title=u'Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy.',
-    description=u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2008-2013).',
+    title=u'Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy',
+    description=Markup(u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi, <strong>ktoré vznikli v pracovnom pomere s UK</strong>. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2008-2013).'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
