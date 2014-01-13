@@ -288,3 +288,6 @@ class Charakteristika(MappingSchema):
     description=u'Ak je to podstatné, uvádzajú sa iné aktivity súvisiace s vysokoškolským vzdelávaním alebo tvorivou činnosťou. Maximálne 3500 znakov.',
     validator=Length(max=3500)
   )
+  konecna_podoba = SchemaNode(Bool(),
+    title=u'Formulár je v konečnej podobe a možno ho použiť v akreditačnom spise',
+  )

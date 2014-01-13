@@ -1,0 +1,36 @@
+.main-content {
+  width: 50em;
+  margin: 0 auto;
+}
+.fixed-bottom {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  color: black;
+  border-top: 1px solid #ddd;
+  box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.05);
+  padding: 1em 0;
+}
+.footer-space {
+  margin-bottom: 7em;
+}
+.user-panel {
+  text-align: right;
+  margin-top: 0.5em;
+}
+.alert-warning {
+  color: #A07833;
+}
+.konecna-podoba {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.42857;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  border: 1px solid transparent;
+}
