@@ -66,10 +66,12 @@ class PedagogickaCinnost(MappingSchema):
     title=u'Názov predmetu'
   )
   stupen_studia = SchemaNode(String(),
-    title=u'Stupeň štúdia'
+    title=u'Stupeň štúdia',
+    description=u'Napríklad: 1., 2.'
   )
   typ_cinnosti = SchemaNode(String(),
-    title=u'Typ vzdelávacej činnosti'
+    title=u'Typ vzdelávacej činnosti',
+    description=u'Napríklad: prednášky, cvičenia, semináre'
   )
 
 class PredchadzajucaPredagogickaCinnost(PedagogickaCinnost):
@@ -187,7 +189,7 @@ class Charakteristika(MappingSchema):
       title=u'Pedagogická činnosť'
     ),
     title=u'Aktuálna pedagogická činnosť',
-    description=u'Uvádza sa zoznam aktuálne vyučovaných predmetov. Uvádzajú sa len predmety vyučované v rámci vysokej školy, ktorá predkladá žiadosť.'
+    description=Markup(u'Uvádza sa zoznam aktuálne vyučovaných predmetov. <strong>Uvádzajú sa len predmety vyučované v rámci vysokej školy, ktorá predkladá žiadosť.</strong>')
   )
   predch_pedag_cinnost = SchemaNode(Sequence(),
     PredchadzajucaPredagogickaCinnost(
