@@ -18,7 +18,7 @@ class Vzdelanie(MappingSchema):
   )
   rok = SchemaNode(Integer(),
     title=u'Rok',
-    missing=None
+    missing=colander.null
   )
   odbor_program = SchemaNode(String(),
     title=u'Odbor a program',
@@ -33,7 +33,7 @@ class VzdelanieTitulDocent(MappingSchema):
   )
   rok = SchemaNode(Integer(),
     title=u'Rok udelenia titulu',
-    missing=None
+    missing=colander.null
   )
 
 class VzdelanieTitulProfesor(MappingSchema):
@@ -43,7 +43,7 @@ class VzdelanieTitulProfesor(MappingSchema):
   )
   rok = SchemaNode(Integer(),
     title=u'Rok',
-    missing=None,
+    missing=colander.null,
     description=u'Uvádza sa rok, kedy vysoká škola navrhla vymenovanie za profesora'
   )
 
@@ -54,7 +54,7 @@ class VzdelanieDoktorVied(MappingSchema):
   )
   rok = SchemaNode(Integer(),
     title=u'Rok',
-    missing=None
+    missing=colander.null
   )
   odbor_program = SchemaNode(String(),
     title=u'Vedný odbor',
