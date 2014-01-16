@@ -16,4 +16,11 @@ $(document).ready(function(){
       }
       form.submitting = false;
     });
+    (function loop(){
+      setTimeout(function() {
+        $.ajax();
+        loop();
+      }, 60000);
+    })();
+    
 });
