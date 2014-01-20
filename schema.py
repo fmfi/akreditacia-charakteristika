@@ -104,11 +104,21 @@ class VystupBiblio(MappingSchema):
     title=u'Bibliografické informácie',
     widget=deform.widget.TextAreaWidget(rows=2)
   )
+  nazov_zamestnavatela = SchemaNode(String(),
+    title=u'Názov zamestnávateľa',
+    description=u'Uvádza sa len v prípade ak práca vznikla v pracovnom pomere mimo UK.',
+    missing=colander.null
+  )
 
 class VystupProjekt(MappingSchema):
   popis = SchemaNode(String(),
     title=u'Informácie o projekte',
     widget=deform.widget.TextAreaWidget(rows=2)
+  )
+  nazov_zamestnavatela = SchemaNode(String(),
+    title=u'Názov zamestnávateľa',
+    description=u'Uvádza sa len v prípade ak projekt vznikol v pracovnom pomere mimo UK.',
+    missing=colander.null
   )
 
 class VystupSOhlasmi(MappingSchema):
@@ -120,6 +130,11 @@ class VystupSOhlasmi(MappingSchema):
     title=u'Ohlasy',
     name='ohlas',
     widget=deform.widget.TextAreaWidget(rows=10)
+  )
+  nazov_zamestnavatela = SchemaNode(String(),
+    title=u'Názov zamestnávateľa',
+    description=u'Uvádza sa len v prípade ak výstup vznikol v pracovnom pomere mimo UK.',
+    missing=colander.null
   )
 
 class Charakteristika(MappingSchema):
@@ -237,7 +252,7 @@ class Charakteristika(MappingSchema):
       title=u''
     ),
     title=u'Najvýznamnejšie publikované vedecké práce',
-    description=Markup(u'Uvádza sa najviac päť výstupov, <strong>ktoré vznikli v pracovnom pomere s UK</strong>.'),
+    description=Markup(u'Uvádza sa najviac päť výstupov. <strong>Ak práca vznikla v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
@@ -247,7 +262,7 @@ class Charakteristika(MappingSchema):
       title=u''
     ),
     title=u'Najvýznamnejšie publikované vedecké práce v rokoch 2008-2013',
-    description=Markup(u'Uvádza sa najviac päť výstupov, <strong>ktoré vznikli v pracovnom pomere s UK</strong>.'),
+    description=Markup(u'Uvádza sa najviac päť výstupov. <strong>Ak práca vznikla v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
@@ -257,7 +272,7 @@ class Charakteristika(MappingSchema):
       title=u''
     ),
     title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2008-2013',
-    description=Markup(u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov, <strong>ktoré vznikli v pracovnom pomere s UK</strong>.'),
+    description=Markup(u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov. <strong>Ak projekt vznikol v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
@@ -267,7 +282,7 @@ class Charakteristika(MappingSchema):
       title=u'Výstup s ohlasmi'
     ),
     title=u'Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy',
-    description=Markup(u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi, <strong>ktoré vznikli v pracovnom pomere s UK</strong>. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2008-2013).'),
+    description=Markup(u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. <strong>Ak výstup vznikol v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2008-2013).'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
