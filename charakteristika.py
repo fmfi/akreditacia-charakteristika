@@ -21,7 +21,8 @@ import ldap
 from pkg_resources import resource_filename
 import colander
 import time
-from jinja2 import Markup
+import jinja2
+from markupsafe import Markup, soft_unicode
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -59,6 +60,13 @@ def index():
     return render_template('login.html')
   return show_form('user-{}'.format(user), user=user)
 
+@app.route('/rtf')
+def rtf_index():
+  user = request.remote_user
+  if not user:
+    return 'Authorization required', 403
+  return rtf_download('user-{}'.format(user))
+
 @app.route('/login')
 def login():
   return redirect(url_for('index'))
@@ -75,6 +83,10 @@ def logout():
 @app.route('/<token:token>', methods=['POST', 'GET'])
 def using_token(token):
   return show_form('token-{}'.format(token), {'token':token})
+
+@app.route('/<token:token>.rtf')
+def rtf_using_token(token):
+  return rtf_download('token-{}'.format(token))
 
 class MyJsonEncoder(json.JSONEncoder):
   def default(self, obj):
@@ -176,6 +188,45 @@ def show_form(filename, metadata_default={}, **kwargs):
       except colander.Invalid as e:
         form.widget.handle_error(form, e)
   return render_template('form.html', form=form, data=data, messages=form_messages(form), saved=saved, **kwargs)
+
+class RTFEnvironment(jinja2.Environment):
+  def __init__(self, **kwargs):
+    super(RTFEnvironment, self).__init__('[[%', '%]]', '[[#', '#]]', '[[!', '!]]', **kwargs)
+    def escape_rtf(val):
+      if val == colander.null:
+        val = u''
+      val = soft_unicode(val)
+      r = ''
+      prevc = None
+      for c in val:
+        if (c == '\n' and prevc != '\r') or (c == '\r' and prevc != '\n'):
+          r += '\line '
+        elif (c == '\n' and prevc == '\r') or (c == '\r' and prevc == '\n'):
+          pass
+        elif c in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ':
+          r += c
+        else:
+          r += '\u{}?'.format(ord(c))
+        prevc = c
+      return r
+    self.filters['rtf'] = escape_rtf
+
+def render_rtf_form(data, metadata):
+  rtf_env = RTFEnvironment(loader=jinja2.PackageLoader(__name__, 'templates'))
+  template = rtf_env.get_template('form.rtf')
+  return template.render(data=data, display_name='Display Name')
+
+def rtf_download(filename):
+  loaded = load_form(filename)
+  if loaded == None:
+    raise ValueError('Form does not exist')
+  metadata = loaded['metadata']
+  data = loaded['form']
+  form = Form(Charakteristika(), buttons=('submit',), appstruct=data)
+  if 'cstruct' in loaded:
+    form.cstruct = loaded['cstruct']
+    data = form.schema.deserialize(form.cstruct)
+  return Response(render_rtf_form(data=data, metadata=metadata), mimetype='application/rtf')
 
 def ldap_escape(s):
   """Escape LDAP filter value
