@@ -203,7 +203,7 @@ class Charakteristika(MappingSchema):
       name='pedagogicka_cinnost',
       title=u'Pedagogická činnosť'
     ),
-    title=u'Aktuálna pedagogická činnosť',
+    title=Markup(u'<span class="cislovanie-ak">III.2</span> Aktuálna pedagogická činnosť'),
     description=Markup(u'Uvádza sa zoznam aktuálne vyučovaných predmetov. <strong>Uvádzajú sa len predmety vyučované v rámci vysokej školy, ktorá predkladá žiadosť.</strong>')
   )
   predch_pedag_cinnost = SchemaNode(Sequence(),
@@ -211,7 +211,7 @@ class Charakteristika(MappingSchema):
       name='predchadzajuca_pedagogicka_cinnost',
       title=u'Pedagogická činnosť'
     ),
-    title=u'Predchádzajúca pedagogická činnosť',
+    title=Markup(u'<span class="cislovanie-ak">III.3</span> Predchádzajúca pedagogická činnosť'),
     description=u'Uvádza sa zoznam najviac piatich vybraných, v minulosti vyučovaných predmetov. Ak bol predmet vyučovaný na inej vysokej škole, uvádza sa aj názov vysokej školy, na ktorej bol predmet vyučovaný',
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -221,7 +221,7 @@ class Charakteristika(MappingSchema):
       name='tvoriva_cinnost',
       title=u'Tvorivá činnosť'
     ),
-    title=u'Aktuálna tvorivá činnosť',
+    title=Markup(u'<span class="cislovanie-ak">III.4</span> Aktuálna tvorivá činnosť'),
     description=u'Uvádza sa zoznam aktuálnych výskumných projektov, na ktorých riešení zamestnanec participuje. Ak ide o vedúceho projektu, uvádza sa táto skutočnosť osobitne. Je možné uviesť aj výskumné projekty pre hospodársku sféru.'
   )
   vystup_wos_scopus = Vystup(
@@ -251,7 +251,7 @@ class Charakteristika(MappingSchema):
       name='najv_prace_celkom',
       title=u''
     ),
-    title=u'Najvýznamnejšie publikované vedecké práce',
+    title=Markup(u'<span class="cislovanie-ak">IV.2</span> Najvýznamnejšie publikované vedecké práce'),
     description=Markup(u'Uvádza sa najviac päť výstupov. <strong>Ak práca vznikla v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -261,7 +261,7 @@ class Charakteristika(MappingSchema):
       name='najv_prace_za_poslednych_6_rokov',
       title=u''
     ),
-    title=u'Najvýznamnejšie publikované vedecké práce v rokoch 2008-2013',
+    title=Markup(u'<span class="cislovanie-ak">IV.3</span> Najvýznamnejšie publikované vedecké práce v rokoch 2008-2013'),
     description=Markup(u'Uvádza sa najviac päť výstupov. <strong>Ak práca vznikla v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -271,7 +271,7 @@ class Charakteristika(MappingSchema):
       name='najv_projekty_za_poslednych_6_rokov',
       title=u''
     ),
-    title=u'Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2008-2013',
+    title=Markup(u'<span class="cislovanie-ak">IV.4</span> Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2008-2013'),
     description=Markup(u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov. <strong>Ak projekt vznikol v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -281,25 +281,25 @@ class Charakteristika(MappingSchema):
       name='vystup_s_ohlasmi',
       title=u'Výstup s ohlasmi'
     ),
-    title=u'Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy',
+    title=Markup(u'<span class="cislovanie-ak">IV.5</span> Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy'),
     description=Markup(u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. <strong>Ak výstup vznikol v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2008-2013).'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
   funkcie = SchemaNode(String(),
-    title=u'Funkcie a členstvo vo vedeckých, odborných a profesijných spoločnostiach',
+    title=Markup(u'<span class="cislovanie-ak">IV.6</span> Funkcie a členstvo vo vedeckých, odborných a profesijných spoločnostiach'),
     widget=deform.widget.TextAreaWidget(rows=10),
     missing=''
   )
   dopln_program = SchemaNode(String(),
-    title=u'Charakteristika aktivít súvisiacich s príslušným študijným programom',
+    title=Markup(u'<span class="cislovanie-ak">V.1</span> Charakteristika aktivít súvisiacich s príslušným študijným programom'),
     widget=deform.widget.TextAreaWidget(rows=5),
     missing='',
     description=u'Uvádza sa len u garanta a spolugaranta študijného programu. Zabezpečované aktivity by mali preukázať, že garant má podstatný vplyv na uskutočňovanie študijného programu. Maximálne 3500 znakov.',
     validator=Length(max=3500)
   )
   dopln_dalsie = SchemaNode(String(),
-    title=u'Ďalšie aktivity',
+    title=Markup(u'<span class="cislovanie-ak">V.2</span> Ďalšie aktivity'),
     widget=deform.widget.TextAreaWidget(rows=5),
     missing='',
     description=u'Ak je to podstatné, uvádzajú sa iné aktivity súvisiace s vysokoškolským vzdelávaním alebo tvorivou činnosťou. Maximálne 3500 znakov.',

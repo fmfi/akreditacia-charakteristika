@@ -21,6 +21,7 @@ import ldap
 from pkg_resources import resource_filename
 import colander
 import time
+from jinja2 import Markup
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -122,7 +123,7 @@ def form_messages(form):
       return u'{}.'.format(exc.pos + 1)
     if exc.node.title == None or exc.node.title == u'':
       return None
-    return unicode(exc.node.title)
+    return exc.node.title
   
   errors = []
   for path in form.error.paths():
@@ -134,7 +135,7 @@ def form_messages(form):
       tit = title(exc)
       if tit != None:
         titlepath.append(tit)
-    errors.append((u' – '.join(titlepath), messages))
+    errors.append((Markup(u' – ').join(titlepath), messages))
   return errors
 
 def show_form(filename, metadata_default={}, **kwargs):

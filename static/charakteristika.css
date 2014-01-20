@@ -34,3 +34,7 @@
   vertical-align: middle;
   border: 1px solid transparent;
 }
+
+.alert .cislovanie-ak {
+  display: none;
+}

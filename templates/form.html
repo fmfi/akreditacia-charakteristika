@@ -50,7 +50,7 @@
       </div>
       {% endif %}
       
-      <h2>Základné údaje</h2>
+      <h2><span class="cislovanie-ak">I.</span> Základné údaje</h2>
       {{ render_field(form.titul_pred) }}
       {{ render_field(form.priezvisko) }}
       {{ render_field(form.meno) }}
@@ -59,7 +59,7 @@
       {{ render_field(form.pracovisko) }}
       {{ render_field(form.email) }}
 
-      <h2>Informácie o vysokoškolskom vzdelaní a ďaľšom kvalifikačnom raste</h2>
+      <h2><span class="cislovanie-ak">II.</span> Informácie o vysokoškolskom vzdelaní a ďaľšom kvalifikačnom raste</h2>
       {{ form.vzd_druhy.render()|safe }}
       {{ form.vzd_treti.render()|safe }}
       {{ form.vzd_docent.render()|safe }}
@@ -67,9 +67,9 @@
       {{ form.vzd_doktor_vied.render()|safe }}
       {{ form.vzd_dalsie.render()|safe }}
 
-      <h2>Zabezpečované činnosti</h2>
+      <h2><span class="cislovanie-ak">III.</span> Zabezpečované činnosti</h2>
       <div class="panel panel-default">
-        <div class="panel-heading">Prehľad o vedených záverečných prácach, ktoré boli obhájené</div>
+        <div class="panel-heading"><span class="cislovanie-ak">III.1</span> Prehľad o vedených záverečných prácach, ktoré boli obhájené</div>
         <div class="panel-body">
           <p class="help-block">Uvádza sa počet záverečných prác, ktoré boli vedené z pozície školiteľa a ktoré boli úspešne obhájené.</p>
           {{ render_field(form.veduci_bakalarske) }}
@@ -83,10 +83,10 @@
       {{ form.predch_pedag_cinnost.render()|safe }}
       {{ form.tvoriva_cinnost.render()|safe }}
 
-      <h2>Profil kvality tvorivej činnosti</h2>
+      <h2><span class="cislovanie-ak">IV.</span> Profil kvality tvorivej činnosti</h2>
       
       <div class="panel panel-default">
-        <div class="panel-heading">Prehľad výstupov</div>
+        <div class="panel-heading"><span class="cislovanie-ak">IV.1</span> Prehľad výstupov</div>
         <div class="panel-body">
           <p class="help-block">Rok sa posudzuje v závislosti od roku vydania, ak ide o ohlasy posudzuje sa od roku vydania publikácie, ktorá je ohlasom na výstup, ak ide o projekty posudzuje sa v závislosti od roku, v ktorom sa začal projekt uskutočňovať.</p>
           <p class="help-block">Pozrite si <a href="https://sluzby.fmph.uniba.sk/ka/navody/wos-a-scopus" target="_blank">návod na použitie databáz Web of Science a SCOPUS</a>.</p>
@@ -112,7 +112,7 @@
 
       {{ widget_in_panel(form.funkcie) }}
       
-      <h2>Doplňujúce informácie</h2>
+      <h2><span class="cislovanie-ak">V.</span> Doplňujúce informácie</h2>
 
       {{ widget_in_panel(form.dopln_program) }}
       {{ widget_in_panel(form.dopln_dalsie) }}
