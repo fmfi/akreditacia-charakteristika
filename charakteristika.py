@@ -226,7 +226,9 @@ def rtf_download(filename):
   if 'cstruct' in loaded:
     form.cstruct = loaded['cstruct']
     data = form.schema.deserialize(form.cstruct)
-  return Response(render_rtf_form(data=data, metadata=metadata), mimetype='application/rtf')
+  response =  Response(render_rtf_form(data=data, metadata=metadata), mimetype='application/rtf')
+  response.headers['Content-Disposition'] = 'attachment; filename=vpchar.rtf'
+  return response
 
 def ldap_escape(s):
   """Escape LDAP filter value
