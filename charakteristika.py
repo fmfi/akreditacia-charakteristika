@@ -88,6 +88,14 @@ def using_token(token):
 def rtf_using_token(token):
   return rtf_download('token-{}'.format(token))
 
+@app.route('/bootstrap-ie7.css')
+def ie7_bootstrap():
+  return render_template('bootstrap-ie7.css')
+
+@app.route('/boxsizing.htc')
+def ie7_boxsizing():
+  return Response(render_template('boxsizing.htc'), mimetype='text/x-component')
+
 class MyJsonEncoder(json.JSONEncoder):
   def default(self, obj):
     if obj == colander.null:
