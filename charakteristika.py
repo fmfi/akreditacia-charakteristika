@@ -214,7 +214,8 @@ class RTFEnvironment(jinja2.Environment):
 def render_rtf_form(data, metadata):
   rtf_env = RTFEnvironment(loader=jinja2.PackageLoader(__name__, 'templates'))
   template = rtf_env.get_template('form.rtf')
-  return template.render(data=data, display_name='Display Name')
+  display_name = u', '.join([data['priezvisko'], data['meno'], data['titul_pred'], data['titul_za']])
+  return template.render(data=data, display_name=display_name)
 
 def rtf_download(filename):
   loaded = load_form(filename)
