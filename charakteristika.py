@@ -7,7 +7,7 @@ app = Flask(__name__)
 from flask import render_template, url_for, redirect
 from flask import request, Request
 from flask import Response
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, NotFound
 from werkzeug.datastructures import OrderedMultiDict
 from werkzeug.routing import BaseConverter
 import re
@@ -220,13 +220,16 @@ def render_rtf_form(data, metadata):
 def rtf_download(filename):
   loaded = load_form(filename)
   if loaded == None:
-    raise ValueError('Form does not exist')
+    raise NotFound('Form does not exist')
   metadata = loaded['metadata']
   data = loaded['form']
   form = Form(Charakteristika(), buttons=('submit',), appstruct=data)
   if 'cstruct' in loaded:
     form.cstruct = loaded['cstruct']
-    data = form.schema.deserialize(form.cstruct)
+    try:
+      data = form.schema.deserialize(form.cstruct)
+    except colander.Invalid:
+      return render_template('rtf-invalid.html'), 404
   response =  Response(render_rtf_form(data=data, metadata=metadata), mimetype='application/rtf')
   response.headers['Content-Disposition'] = 'attachment; filename=vpchar.rtf'
   return response
