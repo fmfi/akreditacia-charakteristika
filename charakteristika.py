@@ -82,7 +82,7 @@ def logout():
 
 @app.route('/<token:token>', methods=['POST', 'GET'])
 def using_token(token):
-  return show_form('token-{}'.format(token), {'token':token})
+  return show_form('token-{}'.format(token), {'token':token}, token=token)
 
 @app.route('/<token:token>.rtf')
 def rtf_using_token(token):
@@ -153,6 +153,7 @@ def form_messages(form):
 def show_form(filename, metadata_default={}, **kwargs):
   now = time.time()
   loaded = load_form(filename)
+  exists = False
   if loaded == None:
     data = {}
     metadata = {'created': now}
@@ -169,6 +170,7 @@ def show_form(filename, metadata_default={}, **kwargs):
   else:
     data = loaded['form']
     metadata = loaded['metadata']
+    exists = True
   form = Form(Charakteristika(), buttons=('submit',), appstruct=data)
   saved = False
   if request.method == 'POST':
@@ -187,7 +189,7 @@ def show_form(filename, metadata_default={}, **kwargs):
         data = form.schema.deserialize(form.cstruct)
       except colander.Invalid as e:
         form.widget.handle_error(form, e)
-  return render_template('form.html', form=form, data=data, messages=form_messages(form), saved=saved, **kwargs)
+  return render_template('form.html', form=form, data=data, messages=form_messages(form), saved=saved, exists=exists, **kwargs)
 
 class RTFEnvironment(jinja2.Environment):
   def __init__(self, **kwargs):
