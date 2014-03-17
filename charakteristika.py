@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 from flask import render_template, url_for, redirect
 from flask import request, Request
-from flask import Response
+from flask import Response, abort
+from flask import g
 from werkzeug.exceptions import BadRequest, NotFound
 from werkzeug.datastructures import OrderedMultiDict
 from werkzeug.routing import BaseConverter
@@ -23,6 +24,11 @@ import colander
 import time
 import jinja2
 from markupsafe import Markup, soft_unicode
+import psycopg2
+# postgres unicode
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+from psycopg2.extras import NamedTupleCursor
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -53,19 +59,71 @@ class FormTokenConverter(BaseConverter):
 
 app.url_map.converters['token'] = FormTokenConverter
 
+@app.before_request
+def before_request():
+  g.db = psycopg2.connect(config.conn_str, cursor_factory=NamedTupleCursor)
+  
+  username = request.remote_user
+  if app.debug and 'REMOTE_USER' in os.environ:
+    username = os.environ['REMOTE_USER']
+  
+  g.user = username
+  if g.user:
+    with g.db.cursor() as cur:
+      cur.execute('SELECT op.je_admin, op.je_garant FROM osoba o, ilsp_opravnenia op WHERE o.id = op.osoba AND o.login = %s', (username,))
+      row = cur.fetchone()
+      if row is None:
+        g.je_garant = False
+        g.je_admin = False
+      else:
+        g.je_garant = row.je_garant
+        g.je_admin = row.je_admin
+  else:
+    g.je_garant = False
+    g.je_admin = False
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
-  user = request.remote_user
-  if not user:
+  if not g.user:
     return render_template('login.html')
-  return show_form('user-{}'.format(user), user=user)
+  return show_form('user-{}'.format(g.user), user=g.user)
+
+@app.route('/vsetky')
+def vsetky():
+  if not (g.je_garant or g.je_admin):
+    abort(403)
+  documents = [x for x in os.listdir(config.document_dir) if x.endswith('.json')]
+  loaded_documents = []
+  for filename in documents:
+    doc = load_form(filename[:-5])
+    doc['filename'] = filename
+    doc['formatovane_meno'] = ' '.join(str(doc['cstruct'][x]) for x in ['titul_pred', 'meno', 'priezvisko', 'titul_za'] if doc['cstruct'][x] is not colander.null)
+    try:
+      Charakteristika().deserialize(doc['cstruct'])
+    except colander.Invalid:
+      doc['valid'] = False
+    else:
+      doc['valid'] = True
+    doc['spravne_vyplnene'] = doc['valid'] and doc.get('form', {}).get('konecna_podoba', False)
+    tokmatch = re.match(r'^token-(.*)\.json$', filename)
+    loginmatch = re.match(r'^user-(.*)\.json$', filename)
+    if tokmatch:
+      if doc['spravne_vyplnene']:
+        doc['url'] = url_for('rtf_using_token', token=tokmatch.group(1))
+      else:
+        doc['url'] = None
+    elif loginmatch:
+      doc['url'] = url_for('rtf_using_login', login=loginmatch.group(1))
+    else:
+      continue
+    loaded_documents.append(doc)
+  return render_template('vsetky.html', documents=loaded_documents)
 
 @app.route('/rtf')
 def rtf_index():
-  user = request.remote_user
-  if not user:
+  if not g.user:
     return 'Authorization required', 403
-  return rtf_download('user-{}'.format(user))
+  return rtf_download('user-{}'.format(g.user))
 
 @app.route('/login')
 def login():
@@ -87,6 +145,12 @@ def using_token(token):
 @app.route('/<token:token>.rtf')
 def rtf_using_token(token):
   return rtf_download('token-{}'.format(token))
+
+@app.route('/<login>.rtf')
+def rtf_using_login(login):
+  if not (g.je_admin or g.je_garant):
+    abort(403)
+  return rtf_download('user-{}'.format(login))
 
 class MyJsonEncoder(json.JSONEncoder):
   def default(self, obj):
@@ -158,8 +222,8 @@ def show_form(filename, metadata_default={}, **kwargs):
     data = {}
     metadata = {'created': now}
     metadata.update(metadata_default)
-    if request.remote_user:
-      ldap_result = query_ldap(request.remote_user)
+    if g.user:
+      ldap_result = query_ldap(g.user)
       if ldap_result:
         data = {
           'titul_pred': ldap_result[0],

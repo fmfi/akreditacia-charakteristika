@@ -4,6 +4,7 @@ class Configuration(object):
     self.secret = 'change this!'
 
     self.document_dir = '.'
+    self.conn_str = 'host=localhost dbname= user= password='
 
     ADMINS = ['email@example.com']
     if not app.debug:
