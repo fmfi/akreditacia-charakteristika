@@ -29,6 +29,8 @@ import psycopg2
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 from psycopg2.extras import NamedTupleCursor
+from itsdangerous import URLSafeSerializer
+from functools import wraps
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -59,6 +61,40 @@ class FormTokenConverter(BaseConverter):
 
 app.url_map.converters['token'] = FormTokenConverter
 
+class LoginConverter(BaseConverter):
+  def __init__(self, url_map, *items):
+    super(LoginConverter, self).__init__(url_map)
+    self.regex = r'[A-Za-z0-9]+'
+
+app.url_map.converters['login'] = LoginConverter
+
+def restrict(api=False, roles=None):
+  if roles == None:
+    roles = []
+  roles = set(roles)
+  def decorator(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+      if not g.user:
+        if api:
+          abort(401)
+        else:
+          goto = None
+          if request.method in ['HEAD', 'GET']:
+            if request.url.startswith(request.url_root):
+              goto = request.url[len(request.url_root):]
+              serializer = URLSafeSerializer(config.secret)
+              goto = serializer.dumps(goto)
+          return redirect(url_for('index', next=goto))
+      if roles and not roles.intersection(g.roles):
+        if api:
+          abort(403)
+        else:
+          return render_template('unauthorized.html'), 403
+      return f(*args, **kwargs)
+    return wrapper
+  return decorator
+
 @app.before_request
 def before_request():
   g.db = psycopg2.connect(config.conn_str, cursor_factory=NamedTupleCursor)
@@ -68,30 +104,41 @@ def before_request():
     username = os.environ['REMOTE_USER']
   
   g.user = username
+  g.roles = set()
   if g.user:
     with g.db.cursor() as cur:
       cur.execute('SELECT op.je_admin, op.je_garant FROM osoba o, ilsp_opravnenia op WHERE o.id = op.osoba AND o.login = %s', (username,))
       row = cur.fetchone()
-      if row is None:
-        g.je_garant = False
-        g.je_admin = False
-      else:
-        g.je_garant = row.je_garant
-        g.je_admin = row.je_admin
-  else:
-    g.je_garant = False
-    g.je_admin = False
+      if row is not None:
+        if row.je_garant:
+          g.roles.add('garant')
+        if row.je_admin:
+          g.roles.add('admin')
+
+def login_get_next_url():
+  if 'next' not in request.args:
+    return None
+  try:
+    serializer = URLSafeSerializer(config.secret)
+    goto = serializer.loads(request.args['next'])
+    goto = request.url_root + goto
+    return goto
+  except:
+    return None
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
   if not g.user:
-    return render_template('login.html')
+    goto = login_get_next_url()
+    goto_enc = None
+    if goto is not None:
+      goto_enc = request.args['next']
+    return render_template('login.html', next=goto_enc, next_url=goto)
   return show_form('user-{}'.format(g.user), user=g.user)
 
 @app.route('/vsetky')
+@restrict(roles=['admin', 'garant'])
 def vsetky():
-  if not (g.je_garant or g.je_admin):
-    abort(403)
   documents = [x for x in os.listdir(config.document_dir) if x.endswith('.json')]
   loaded_documents = []
   for filename in documents:
@@ -125,6 +172,7 @@ def vsetky():
   return render_template('vsetky.html', documents=loaded_documents)
 
 @app.route('/rtf')
+@restrict()
 def rtf_index():
   if not g.user:
     return 'Authorization required', 403
@@ -132,7 +180,10 @@ def rtf_index():
 
 @app.route('/login')
 def login():
-  return redirect(url_for('index'))
+  goto = login_get_next_url()
+  if not goto:
+    return redirect(url_for('index'))
+  return redirect(goto)
 
 @app.route('/logout')
 def logout():
@@ -151,10 +202,9 @@ def using_token(token):
 def rtf_using_token(token):
   return rtf_download('token-{}'.format(token))
 
-@app.route('/<login>.rtf')
+@app.route('/<login:login>.rtf')
+@restrict(roles=['admin', 'garant'])
 def rtf_using_login(login):
-  if not (g.je_admin or g.je_garant):
-    abort(403)
   return rtf_download('user-{}'.format(login))
 
 class MyJsonEncoder(json.JSONEncoder):
