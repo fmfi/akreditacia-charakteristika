@@ -171,6 +171,9 @@ def vsetky():
     else:
       doc['url'] = None
     loaded_documents.append(doc)
+  def sort_key(document):
+    return document['cstruct']['priezvisko'], document['cstruct']['meno'], document['filename']
+  loaded_documents.sort(key=sort_key)
   return render_template('vsetky.html', documents=loaded_documents)
 
 @app.route('/rtf')
