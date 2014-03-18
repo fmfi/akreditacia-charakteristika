@@ -18,9 +18,9 @@
   </head>
   <body>
   <div class="main-content">
-    {% if user %}
+    {% if g.user %}
     <div class="user-panel">
-    {{ user }} - <a href="{{ url_for('logout') }}">Odhlásiť</a>
+    {{ g.user }} - <a href="{{ url_for('logout') }}">Odhlásiť</a>
     </div>
     {% endif %}
     {% block content %}
