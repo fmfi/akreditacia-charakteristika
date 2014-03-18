@@ -95,9 +95,17 @@ def vsetky():
   documents = [x for x in os.listdir(config.document_dir) if x.endswith('.json')]
   loaded_documents = []
   for filename in documents:
+    tokmatch = re.match(r'^token-(.*)\.json$', filename)
+    loginmatch = re.match(r'^user-(.*)\.json$', filename)
+    if not (tokmatch or loginmatch):
+      continue
     doc = load_form(filename[:-5])
     doc['filename'] = filename
-    doc['formatovane_meno'] = u' '.join(unicode(doc['cstruct'][x]) for x in ['titul_pred', 'meno', 'priezvisko', 'titul_za'] if doc['cstruct'][x] is not colander.null)
+    doc['formatovane_meno'] = u' '.join(unicode(doc['cstruct'][x]) for x in ['titul_pred', 'meno', 'priezvisko'] if doc['cstruct'][x] is not colander.null)
+    if doc['cstruct']['titul_za'] is not colander.null:
+      doc['formatovane_meno'] = u', '.join([doc['formatovane_meno'], doc['cstruct']['titul_za']])
+    if not doc['formatovane_meno'].strip():
+      doc['formatovane_meno'] = tokmatch.group(1) if tokmatch else loginmatch.group(1)
     try:
       Charakteristika().deserialize(doc['cstruct'])
     except colander.Invalid:
@@ -105,17 +113,14 @@ def vsetky():
     else:
       doc['valid'] = True
     doc['spravne_vyplnene'] = doc['valid'] and doc.get('form', {}).get('konecna_podoba', False)
-    tokmatch = re.match(r'^token-(.*)\.json$', filename)
-    loginmatch = re.match(r'^user-(.*)\.json$', filename)
-    if tokmatch:
-      if doc['spravne_vyplnene']:
+    
+    if doc['valid']:
+      if tokmatch:
         doc['url'] = url_for('rtf_using_token', token=tokmatch.group(1))
-      else:
-        doc['url'] = None
-    elif loginmatch:
-      doc['url'] = url_for('rtf_using_login', login=loginmatch.group(1))
+      elif loginmatch:
+        doc['url'] = url_for('rtf_using_login', login=loginmatch.group(1))
     else:
-      continue
+      doc['url'] = None
     loaded_documents.append(doc)
   return render_template('vsetky.html', documents=loaded_documents)
 
