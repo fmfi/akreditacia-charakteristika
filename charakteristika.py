@@ -31,6 +31,7 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 from psycopg2.extras import NamedTupleCursor
 from itsdangerous import URLSafeSerializer
 from functools import wraps
+from pkg_resources import resource_string
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -310,33 +311,61 @@ def show_form(filename, metadata_default={}, **kwargs):
         form.widget.handle_error(form, e)
   return render_template('form.html', form=form, data=data, messages=form_messages(form), saved=saved, exists=exists, **kwargs)
 
-class RTFEnvironment(jinja2.Environment):
-  def __init__(self, **kwargs):
-    super(RTFEnvironment, self).__init__('[[%', '%]]', '[[#', '#]]', '[[!', '!]]', **kwargs)
-    def escape_rtf(val):
-      if val == colander.null:
-        val = u''
-      val = soft_unicode(val)
-      r = ''
-      prevc = None
-      for c in val:
-        if (c == '\n' and prevc != '\r') or (c == '\r' and prevc != '\n'):
-          r += '\line '
-        elif (c == '\n' and prevc == '\r') or (c == '\r' and prevc == '\n'):
-          pass
-        elif c in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ':
-          r += c
-        else:
-          r += '\u{}?'.format(ord(c))
-        prevc = c
-      return r
-    self.filters['rtf'] = escape_rtf
-
 def render_rtf_form(data, metadata):
-  rtf_env = RTFEnvironment(loader=jinja2.PackageLoader(__name__, 'templates'))
-  template = rtf_env.get_template('form.rtf')
-  display_name = u', '.join([data['priezvisko'], data['meno'], data['titul_pred'], data['titul_za']])
-  return template.render(data=data, display_name=display_name)
+  def p(s):
+    if s is colander.null or s is None:
+      return u''
+    return soft_unicode(s)
+  
+  char = {}
+  char['DISPLAY_NAME'] = u', '.join(p(data[x]) for x in ['priezvisko', 'meno', 'titul_pred', 'titul_za'] if x is not colander.null)
+  
+  for field in ['rok_narodenia', 'veduci_bakalarske', 'veduci_diplomove', 'veduci_dizertacne', 'funkcie', 'dopln_program', 'dopln_dalsie', 'pracovisko', 'email']:
+    char[field.upper()] = data[field]
+  
+  for field in ['vzd_druhy', 'vzd_treti', 'vzd_docent', 'vzd_profesor', 'vzd_doktor_vied']:
+    char['{}_SKOLA'.format(field.upper())] = data[field]['nazov_skoly']
+    char['{}_ROK'.format(field.upper())] = data[field]['rok']
+  for field in ['vzd_druhy', 'vzd_treti', 'vzd_doktor_vied']:
+    char['{}_ODBOR'.format(field.upper())] = data[field]['odbor_program']
+  
+  char['VZD_DALSIE_SKOLA'] = u'\n\n'.join(p(x['nazov_skoly']) for x in data['vzd_dalsie'])
+  char['VZD_DALSIE_ROK'] = u'\n\n'.join(p(x['rok']) for x in data['vzd_dalsie'])
+  char['VZD_DALSIE_ODBOR'] = u'\n\n'.join(p(x['odbor_program']) for x in data['vzd_dalsie'])
+  
+  char['AKT_PEDAG_CINN'] = u'\n'.join(u'{}, {}, {}'.format(p(x['nazov_predmetu']), p(x['stupen_studia']), p(x['typ_cinnosti'])) for x in data['akt_pedag_cinnost'])
+  char['PREDCH_PEDAG_CINN'] = u'\n'.join(u', '.join(p(x[f]) for f in ['nazov_predmetu', 'stupen_studia', 'akademicky_rok', 'typ_cinnosti', 'skola'] if x[f]) for x in data['predch_pedag_cinnost'])
+  char['TVORIVA_CINN'] = u'\n'.join(p(x['nazov_projektu']) + (u' (vedúci projektu)' if x['veduci_projektu'] else u'') for x in data['tvoriva_cinnost'])
+  
+  for field in ['vystup_wos_scopus', 'vystup_a', 'vystup_b', 'vystup_citacie', 'vystup_projekty']:
+    char['{}_CELKOVO'.format(field.upper())] = data[field]['celkovo']
+    char['{}_6R'.format(field.upper())] = data[field]['za_poslednych_6_rokov']
+  char['VYSTUP_PREDNASKY_CELKOVO'] = u'{}/{}'.format(p(data['vystup_prednasky_medzinarodne']['celkovo']), p(data['vystup_prednasky_narodne']['celkovo']))
+  char['VYSTUP_PREDNASKY_6R'] = u'{}/{}'.format(p(data['vystup_prednasky_medzinarodne']['za_poslednych_6_rokov']), p(data['vystup_prednasky_narodne']['za_poslednych_6_rokov']))
+  
+  for field in ['najv_prace_celkom', 'najv_prace_za_poslednych_6_rokov', 'najv_projekty_za_poslednych_6_rokov']:
+    for idx in range(5):
+      dest = '{}_{}'.format(field.replace('za_poslednych_6_rokov', '6R').upper(), idx)
+      if idx < len(data[field]):
+        char[dest] = p(data[field][idx]['popis'])
+        if data[field][idx]['nazov_zamestnavatela']:
+          char[dest] += u' ({})'.format(p(data[field][idx]['nazov_zamestnavatela']))
+      else:
+        char[dest] = u''
+  
+  for idx in range(5):
+    dest = 'VYSTUPY_S_OHLASMI_{}'.format(idx)
+    if idx < len(data['vystupy_s_ohlasmi']):
+      char[dest] = p(data['vystupy_s_ohlasmi'][idx]['popis'])
+      if data['vystupy_s_ohlasmi'][idx]['nazov_zamestnavatela']:
+          char[dest] += u' ({})'.format(p(data['vystupy_s_ohlasmi'][idx]['nazov_zamestnavatela']))
+      char[dest] += u'\n\nOhlasy:\n{}'.format(p(data['vystupy_s_ohlasmi'][idx]['ohlas']))
+    else:
+      char[dest] = u''
+  
+  tdata = {'CHAR_{}'.format(key): value for key, value in char.iteritems()}
+  rtf_template = resource_string(__name__, 'templates/form.rtf')
+  return render_rtf(rtf_template, tdata)
 
 def rtf_download(filename):
   loaded = load_form(filename)
@@ -384,6 +413,40 @@ def query_ldap(user):
   tituly_pred = display_name[:display_name.index(given_name)].strip()
   tituly_za = display_name[display_name.index(surname)+len(surname):].lstrip(',').strip()
   return tituly_pred, given_name, surname, tituly_za
+
+def escape_rtf(val):
+  if val == colander.null or val == None:
+    val = u''
+  val = soft_unicode(val)
+  r = ''
+  prevc = None
+  for c in val:
+    if (c == '\n' and prevc != '\r') or (c == '\r' and prevc != '\n'):
+      r += '\line '
+    elif (c == '\n' and prevc == '\r') or (c == '\r' and prevc == '\n'):
+      pass
+    elif c in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ':
+      r += c
+    else:
+      r += '\u{}?'.format(ord(c))
+    prevc = c
+  return r
+
+def render_rtf(rtf_template, substitutions):
+  replacements = []
+  for key, value in substitutions.iteritems():
+    replacements.append((key, escape_rtf(value)))
+  return multiple_replace(rtf_template, *replacements)
+
+# http://stackoverflow.com/a/15221068
+def multiple_replacer(*key_values):
+    replace_dict = dict(key_values)
+    replacement_function = lambda match: replace_dict[match.group(0)]
+    pattern = re.compile("|".join([re.escape(k) for k, v in key_values]), re.M)
+    return lambda string: pattern.sub(replacement_function, string)
+
+def multiple_replace(string, *key_values):
+    return multiple_replacer(*key_values)(string)
 
 if __name__ == '__main__':
   import sys
