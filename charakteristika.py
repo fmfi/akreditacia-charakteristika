@@ -33,6 +33,9 @@ from itsdangerous import URLSafeSerializer
 from functools import wraps
 from pkg_resources import resource_string
 from datetime import datetime
+from pyuca import Collator
+
+collator = Collator()
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -172,7 +175,9 @@ def vsetky():
       doc['url'] = None
     loaded_documents.append(doc)
   def sort_key(document):
-    return document['cstruct']['priezvisko'], document['cstruct']['meno'], document['filename']
+    def sk(x):
+      return collator.sort_key(soft_unicode(x))
+    return sk(document['cstruct']['priezvisko']), sk(document['cstruct']['meno']), sk(document['filename'])
   loaded_documents.sort(key=sort_key)
   return render_template('vsetky.html', documents=loaded_documents)
 
