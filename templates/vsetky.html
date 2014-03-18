@@ -1,45 +1,25 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Vedecko-pedagogické charakteristiky fyzických osôb</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/typeahead.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/beautify.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/form.css') }}" />
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-2.0.3.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-form-3.09.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-sortable.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-maskedinput-1.3.1.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/deform.js') }}"></script>
-    <style type="text/css">
-      .main-content {
-        width: 50em;
-        margin: 0 auto;
-      }
-    </style>
-  </head>
-  <body><div class="main-content">
-    <h1>Vedecko-pedagogické charakteristiky fyzických osôb</h1>
-    <table class="table">
-      <thead>
+{% extends 'layout.html' %}
+{% block title %}Vedecko-pedagogické charakteristiky fyzických osôb{% endblock %}
+{% block content %}
+  <h1>Vedecko-pedagogické charakteristiky fyzických osôb</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Osoba</th>
+        <th>Vyplnené</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for doc in documents %}
         <tr>
-          <th>Osoba</th>
-          <th>Vyplnené</th>
+          {% if doc.url %}
+          <td><a href="{{ doc.url }}">{{ doc.formatovane_meno }}</a></td>
+          {% else %}
+          <td>{{ doc.formatovane_meno }}</td>
+          {% endif %}
+          <td>{{ 'áno' if doc.spravne_vyplnene else 'nie'}}</td>
         </tr>
-      </thead>
-      <tbody>
-        {% for doc in documents %}
-          <tr>
-            {% if doc.url %}
-            <td><a href="{{ doc.url }}">{{ doc.formatovane_meno }}</a></td>
-            {% else %}
-            <td>{{ doc.formatovane_meno }}</td>
-            {% endif %}
-            <td>{{ 'áno' if doc.spravne_vyplnene else 'nie'}}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div></body>
-</html>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

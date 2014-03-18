@@ -1,153 +1,120 @@
 {% from "macros.html" import render_field, render_errors, render_value_and_errors, render_description, widget_in_panel %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Vedecko-pedagogická charakteristika fyzickej osoby</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/typeahead.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/beautify.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/form.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='charakteristika.css') }}" />
-    <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.10.2.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery.form-3.09.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery.sortable.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery.maskedinput-1.3.1.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='deform.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='charakteristika.js') }}"></script>
-  </head>
-  <body><div class="main-content">
-    {% if user %}
-    <div class="user-panel">
-    {{ user }} - <a href="{{ url_for('logout') }}">Odhlásiť</a>
+{% extends 'layout.html' %}
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='charakteristika.js') }}"></script>
+{% endblock %}
+{% block content %}
+  <h1>Vedecko-pedagogická charakteristika fyzickej osoby</h1>
+  <p>Tento formulár slúži na zozbieranie údajov pre potreby komplexnej akreditácie
+      a je zhotovený podľa <a href="http://www.zakonypreludi.sk/file/data/2013c100z427p07.pdf">prílohy č. 7</a> <a href="http://www.zakonypreludi.sk/zz/2003-104/znenie-20140101">nariadenia vlády č. 104/2003 Z.z. o akreditačnej komisii v znení novely 427/2013 Z.z.</a></p>
+  <p>Dáta vo formulári sa vypĺňajú tak, aby údaje zodpovedali stavu ku dňu 31.12.2013, okrem titulov, ktoré sa uvádzajú aj ak ste ich získali po tomto dátume.</p>
+  {% if exists and not (form.error or messages ) %}
+    {% if token %}
+      {% set export_url = url_for('rtf_using_token', token=token) %}
+    {% else %}
+      {% set export_url = url_for('rtf_index') %}
+    {% endif %}
+    <p><a href="{{ export_url }}" class="btn btn-default">RTF export</a></p>
+  {% endif %}
+  </div>
+  <form id="{{ form.formid }}" method="{{ form.method }}" enctype="multipart/form-data" accept-charset="utf-8">
+    <div class="main-content footer-space">
+    <input type="hidden" name="_charset_" />
+    <input type="hidden" name="__formid))" value="{{ form.formid }}" />
+
+    {% if saved %}
+    <div class="alert alert-success">Dáta boli uložené</div>
+    {% endif %}
+
+    {% if form.error or messages %}
+    <div class="alert alert-warning">
+      <div class="errorMsgLbl">Formulár sa nepodarilo zvalidovať. Prosím skontrolujte vyplnené údaje.</div>
+      {% if messages %}
+        <p>Nasledovné polia ešte treba doplniť alebo opraviť:</p>
+        <ul>
+        {% for fieldname, fieldmsgs in messages %}
+          <li>{{ fieldname }}: {{ fieldmsgs|join('; ') }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
     </div>
     {% endif %}
-    <h1>Vedecko-pedagogická charakteristika fyzickej osoby</h1>
-    <p>Tento formulár slúži na zozbieranie údajov pre potreby komplexnej akreditácie
-       a je zhotovený podľa <a href="http://www.zakonypreludi.sk/file/data/2013c100z427p07.pdf">prílohy č. 7</a> <a href="http://www.zakonypreludi.sk/zz/2003-104/znenie-20140101">nariadenia vlády č. 104/2003 Z.z. o akreditačnej komisii v znení novely 427/2013 Z.z.</a></p>
-    <p>Dáta vo formulári sa vypĺňajú tak, aby údaje zodpovedali stavu ku dňu 31.12.2013, okrem titulov, ktoré sa uvádzajú aj ak ste ich získali po tomto dátume.</p>
-    {% if exists and not (form.error or messages ) %}
-      {% if token %}
-        {% set export_url = url_for('rtf_using_token', token=token) %}
-      {% else %}
-        {% set export_url = url_for('rtf_index') %}
-      {% endif %}
-      <p><a href="{{ export_url }}" class="btn btn-default">RTF export</a></p>
-    {% endif %}
+    
+    <h2><span class="cislovanie-ak">I.</span> Základné údaje</h2>
+    {{ render_field(form.titul_pred) }}
+    {{ render_field(form.priezvisko) }}
+    {{ render_field(form.meno) }}
+    {{ render_field(form.titul_za) }}
+    {{ render_field(form.rok_narodenia) }}
+    {{ render_field(form.pracovisko) }}
+    {{ render_field(form.email) }}
+
+    <h2><span class="cislovanie-ak">II.</span> Informácie o vysokoškolskom vzdelaní a ďaľšom kvalifikačnom raste</h2>
+    {{ form.vzd_druhy.render()|safe }}
+    {{ form.vzd_treti.render()|safe }}
+    {{ form.vzd_docent.render()|safe }}
+    {{ form.vzd_profesor.render()|safe }}
+    {{ form.vzd_doktor_vied.render()|safe }}
+    {{ form.vzd_dalsie.render()|safe }}
+
+    <h2><span class="cislovanie-ak">III.</span> Zabezpečované činnosti</h2>
+    <div class="panel panel-default">
+      <div class="panel-heading"><span class="cislovanie-ak">III.1</span> Prehľad o vedených záverečných prácach, ktoré boli obhájené</div>
+      <div class="panel-body">
+        <p class="help-block">Uvádza sa počet záverečných prác, ktoré boli vedené z pozície školiteľa a ktoré boli úspešne obhájené.</p>
+        {{ render_field(form.veduci_bakalarske) }}
+        {{ render_field(form.veduci_diplomove) }}
+        {{ render_field(form.veduci_dizertacne) }}
+      </div>
     </div>
-    <form id="{{ form.formid }}" method="{{ form.method }}" enctype="multipart/form-data" accept-charset="utf-8">
-      <div class="main-content footer-space">
-      <input type="hidden" name="_charset_" />
-      <input type="hidden" name="__formid))" value="{{ form.formid }}" />
+    
+    
+    {{ form.akt_pedag_cinnost.render()|safe }}
+    {{ form.predch_pedag_cinnost.render()|safe }}
+    {{ form.tvoriva_cinnost.render()|safe }}
 
-      {% if saved %}
-      <div class="alert alert-success">Dáta boli uložené</div>
-      {% endif %}
-
-      {% if form.error or messages %}
-      <div class="alert alert-warning">
-        <div class="errorMsgLbl">Formulár sa nepodarilo zvalidovať. Prosím skontrolujte vyplnené údaje.</div>
-        {% if messages %}
-          <p>Nasledovné polia ešte treba doplniť alebo opraviť:</p>
-          <ul>
-          {% for fieldname, fieldmsgs in messages %}
-            <li>{{ fieldname }}: {{ fieldmsgs|join('; ') }}</li>
-          {% endfor %}
-          </ul>
-        {% endif %}
+    <h2><span class="cislovanie-ak">IV.</span> Profil kvality tvorivej činnosti</h2>
+    
+    <div class="panel panel-default">
+      <div class="panel-heading"><span class="cislovanie-ak">IV.1</span> Prehľad výstupov</div>
+      <div class="panel-body">
+        <p class="help-block">Rok sa posudzuje v závislosti od roku vydania, ak ide o ohlasy posudzuje sa od roku vydania publikácie, ktorá je ohlasom na výstup, ak ide o projekty posudzuje sa v závislosti od roku, v ktorom sa začal projekt uskutočňovať.</p>
+        <p class="help-block">Pozrite si <a href="https://sluzby.fmph.uniba.sk/ka/navody/wos-a-scopus" target="_blank">návod na použitie databáz Web of Science a SCOPUS</a>.</p>
+        <p class="help-block">Kategorizácia publikácií do kategórie A resp. B závisí od</p>
+        <ul  class="help-block">
+          <li>Vašej vednej oblasti - <a href="https://sluzby.fmph.uniba.sk/ka/navody/kategorizacia-publikacii" target="_blank">pozrite si návod na kategorizáciu publikácií</a>
+          <li>a od impakt faktoru alebo <abbr title="Source-Normalized Impact per Paper">SNIP</abbr> - <a href="https://sluzby.fmph.uniba.sk/ka/navody/impakt-faktor" target="_blank">pozrite si tabuľku impakt faktorov</a></li>
+        </ul>
+        {{ render_field(form.vystup_wos_scopus) }}
+        {{ render_field(form.vystup_a) }}
+        {{ render_field(form.vystup_b) }}
+        {{ render_field(form.vystup_citacie) }}
+        {{ render_field(form.vystup_projekty) }}
+        {{ render_field(form.vystup_prednasky_medzinarodne) }}
+        {{ render_field(form.vystup_prednasky_narodne) }}
       </div>
-      {% endif %}
-      
-      <h2><span class="cislovanie-ak">I.</span> Základné údaje</h2>
-      {{ render_field(form.titul_pred) }}
-      {{ render_field(form.priezvisko) }}
-      {{ render_field(form.meno) }}
-      {{ render_field(form.titul_za) }}
-      {{ render_field(form.rok_narodenia) }}
-      {{ render_field(form.pracovisko) }}
-      {{ render_field(form.email) }}
+    </div>
 
-      <h2><span class="cislovanie-ak">II.</span> Informácie o vysokoškolskom vzdelaní a ďaľšom kvalifikačnom raste</h2>
-      {{ form.vzd_druhy.render()|safe }}
-      {{ form.vzd_treti.render()|safe }}
-      {{ form.vzd_docent.render()|safe }}
-      {{ form.vzd_profesor.render()|safe }}
-      {{ form.vzd_doktor_vied.render()|safe }}
-      {{ form.vzd_dalsie.render()|safe }}
+    {{ form.najv_prace_celkom.render()|safe }}
+    {{ form.najv_prace_za_poslednych_6_rokov.render()|safe }}
+    {{ form.najv_projekty_za_poslednych_6_rokov.render()|safe }}
+    {{ form.vystupy_s_ohlasmi.render()|safe }}
 
-      <h2><span class="cislovanie-ak">III.</span> Zabezpečované činnosti</h2>
-      <div class="panel panel-default">
-        <div class="panel-heading"><span class="cislovanie-ak">III.1</span> Prehľad o vedených záverečných prácach, ktoré boli obhájené</div>
-        <div class="panel-body">
-          <p class="help-block">Uvádza sa počet záverečných prác, ktoré boli vedené z pozície školiteľa a ktoré boli úspešne obhájené.</p>
-          {{ render_field(form.veduci_bakalarske) }}
-          {{ render_field(form.veduci_diplomove) }}
-          {{ render_field(form.veduci_dizertacne) }}
-        </div>
+    {{ widget_in_panel(form.funkcie) }}
+    
+    <h2><span class="cislovanie-ak">V.</span> Doplňujúce informácie</h2>
+
+    {{ widget_in_panel(form.dopln_program) }}
+    {{ widget_in_panel(form.dopln_dalsie) }}
+    
+    </div>
+    <div class="fixed-bottom"><div class="main-content">
+      <button type="submit" class="btn btn-primary">Uložiť</button>
+      <div class="konecna-podoba">
+      <input type="checkbox" value="true" id="{{ form.konecna_podoba.oid }}" name="{{ form.konecna_podoba.name }}" {% if form.konecna_podoba.cstruct == form.konecna_podoba.widget.true_val %}checked="checked"{% endif %} />
+      <label for="{{ form.konecna_podoba.oid }}" >{{ form.konecna_podoba.title }}</label>
       </div>
-      
-      
-      {{ form.akt_pedag_cinnost.render()|safe }}
-      {{ form.predch_pedag_cinnost.render()|safe }}
-      {{ form.tvoriva_cinnost.render()|safe }}
-
-      <h2><span class="cislovanie-ak">IV.</span> Profil kvality tvorivej činnosti</h2>
-      
-      <div class="panel panel-default">
-        <div class="panel-heading"><span class="cislovanie-ak">IV.1</span> Prehľad výstupov</div>
-        <div class="panel-body">
-          <p class="help-block">Rok sa posudzuje v závislosti od roku vydania, ak ide o ohlasy posudzuje sa od roku vydania publikácie, ktorá je ohlasom na výstup, ak ide o projekty posudzuje sa v závislosti od roku, v ktorom sa začal projekt uskutočňovať.</p>
-          <p class="help-block">Pozrite si <a href="https://sluzby.fmph.uniba.sk/ka/navody/wos-a-scopus" target="_blank">návod na použitie databáz Web of Science a SCOPUS</a>.</p>
-          <p class="help-block">Kategorizácia publikácií do kategórie A resp. B závisí od</p>
-          <ul  class="help-block">
-            <li>Vašej vednej oblasti - <a href="https://sluzby.fmph.uniba.sk/ka/navody/kategorizacia-publikacii" target="_blank">pozrite si návod na kategorizáciu publikácií</a>
-            <li>a od impakt faktoru alebo <abbr title="Source-Normalized Impact per Paper">SNIP</abbr> - <a href="https://sluzby.fmph.uniba.sk/ka/navody/impakt-faktor" target="_blank">pozrite si tabuľku impakt faktorov</a></li>
-          </ul>
-          {{ render_field(form.vystup_wos_scopus) }}
-          {{ render_field(form.vystup_a) }}
-          {{ render_field(form.vystup_b) }}
-          {{ render_field(form.vystup_citacie) }}
-          {{ render_field(form.vystup_projekty) }}
-          {{ render_field(form.vystup_prednasky_medzinarodne) }}
-          {{ render_field(form.vystup_prednasky_narodne) }}
-        </div>
-      </div>
-
-      {{ form.najv_prace_celkom.render()|safe }}
-      {{ form.najv_prace_za_poslednych_6_rokov.render()|safe }}
-      {{ form.najv_projekty_za_poslednych_6_rokov.render()|safe }}
-      {{ form.vystupy_s_ohlasmi.render()|safe }}
-
-      {{ widget_in_panel(form.funkcie) }}
-      
-      <h2><span class="cislovanie-ak">V.</span> Doplňujúce informácie</h2>
-
-      {{ widget_in_panel(form.dopln_program) }}
-      {{ widget_in_panel(form.dopln_dalsie) }}
-      
-      </div>
-      <div class="fixed-bottom"><div class="main-content">
-        <button type="submit" class="btn btn-primary">Uložiť</button>
-        <div class="konecna-podoba">
-        <input type="checkbox" value="true" id="{{ form.konecna_podoba.oid }}" name="{{ form.konecna_podoba.name }}" {% if form.konecna_podoba.cstruct == form.konecna_podoba.widget.true_val %}checked="checked"{% endif %} />
-        <label for="{{ form.konecna_podoba.oid }}" >{{ form.konecna_podoba.title }}</label>
-        </div>
-      </div></div>
-    </form>
-    <!-- Piwik -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      _paq.push(["trackPageView"]);
-      _paq.push(["enableLinkTracking"]);
-
-      (function() {
-        var u=(("https:" == document.location.protocol) ? "https" : "http") + "://sluzby.fmph.uniba.sk/analytics/";
-        _paq.push(["setTrackerUrl", u+"piwik.php"]);
-        _paq.push(["setSiteId", "1"]);
-        var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
-        g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <!-- End Piwik Code -->
-  </body>
-</html>
+    </div></div>
+  </form>
+{% endblock %}

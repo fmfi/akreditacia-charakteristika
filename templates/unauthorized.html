@@ -1,27 +1,5 @@
-{% from "macros.html" import render_field, render_errors, render_value_and_errors, render_description, widget_in_panel %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Vedecko-pedagogická charakteristika fyzickej osoby</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/typeahead.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/beautify.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('deform.static', filename='css/form.css') }}" />
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-2.0.3.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-form-3.09.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-sortable.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/jquery-maskedinput-1.3.1.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('deform.static', filename='scripts/deform.js') }}"></script>
-    <style type="text/css">
-      .main-content {
-        width: 50em;
-        margin: 0 auto;
-      }
-    </style>
-  </head>
-  <body><div class="main-content">
-    <h1>Nemáte dostatočné oprávnenia</h1>
-    <p>Nemáte oprávnenie pristupovať na túto stránku</p>
-  </div></body>
-</html>
+{% extends 'layout.html' %}
+{% block content %}
+  <h1>Nemáte dostatočné oprávnenia</h1>
+  <p>Nemáte oprávnenie pristupovať na túto stránku</p>
+{% endblock %}
