@@ -97,7 +97,7 @@ def vsetky():
   for filename in documents:
     doc = load_form(filename[:-5])
     doc['filename'] = filename
-    doc['formatovane_meno'] = ' '.join(str(doc['cstruct'][x]) for x in ['titul_pred', 'meno', 'priezvisko', 'titul_za'] if doc['cstruct'][x] is not colander.null)
+    doc['formatovane_meno'] = u' '.join(unicode(doc['cstruct'][x]) for x in ['titul_pred', 'meno', 'priezvisko', 'titul_za'] if doc['cstruct'][x] is not colander.null)
     try:
       Charakteristika().deserialize(doc['cstruct'])
     except colander.Invalid:
