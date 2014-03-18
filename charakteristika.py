@@ -32,6 +32,7 @@ from psycopg2.extras import NamedTupleCursor
 from itsdangerous import URLSafeSerializer
 from functools import wraps
 from pkg_resources import resource_string
+from datetime import datetime
 
 class MyRequest(Request):
   parameter_storage_class = OrderedMultiDict
@@ -362,6 +363,12 @@ def render_rtf_form(data, metadata):
       char[dest] += u'\n\nOhlasy:\n{}'.format(p(data['vystupy_s_ohlasmi'][idx]['ohlas']))
     else:
       char[dest] = u''
+  
+  changed = metadata.get('updated', metadata.get('created', None))
+  if changed:
+    char['POSL_AKTUAL'] = datetime.fromtimestamp(changed).strftime('%d.%m.%Y')
+  else:
+    char['POSL_AKTUAL'] = ''
   
   tdata = {'CHAR_{}'.format(key): value for key, value in char.iteritems()}
   rtf_template = resource_string(__name__, 'templates/form.rtf')
