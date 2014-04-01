@@ -1,4 +1,6 @@
 /*env
 *.pyc
 /local_settings.py
-*.json
+/*.json
+/.idea
+/*.rtf

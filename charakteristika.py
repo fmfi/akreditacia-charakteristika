@@ -244,6 +244,22 @@ def save_form(data, filename):
       pass
     raise
 
+def save_rtf(data, filename):
+  filepath = os.path.join(config.document_dir, '{}.rtf'.format(filename))
+  tmpfilepath = os.path.join(config.document_dir, '{}.rtf.part'.format(filename))
+  try:
+    with open(tmpfilepath, 'w+') as f:
+      f.write(render_rtf_form(data['form'], data['metadata']))
+      f.flush()
+      os.fsync(f.fileno())
+    os.rename(tmpfilepath, filepath)
+  except:
+    try:
+      os.unlink(tmpfilepath)
+    except:
+      pass
+    raise
+
 def load_form(filename):
   filepath = os.path.join(config.document_dir, '{}.json'.format(filename))
   try:
@@ -309,7 +325,9 @@ def show_form(filename, metadata_default={}, **kwargs):
     except ValidationFailure, e:
       pass
     metadata['updated'] = now
-    save_form({'metadata': metadata, 'form': data, 'cstruct': form.cstruct}, filename)
+    savedata = {'metadata': metadata, 'form': data, 'cstruct': form.cstruct}
+    save_form(savedata, filename)
+    save_rtf(savedata, filename)
     saved = True
   else:
     if loaded and 'cstruct' in loaded:
