@@ -392,7 +392,7 @@ def render_rtf_form(data, metadata):
     dest = 'VYSTUPY_S_OHLASMI_{}'.format(idx)
     if idx < len(data['vystupy_s_ohlasmi']):
       char[dest] = p(data['vystupy_s_ohlasmi'][idx]['popis'])
-      if data['vystupy_s_ohlasmi'][idx]['nazov_zamestnavatela']:
+      if data['vystupy_s_ohlasmi'][idx].get('nazov_zamestnavatela'):
           char[dest] += u' ({})'.format(p(data['vystupy_s_ohlasmi'][idx]['nazov_zamestnavatela']))
       char[dest] += u'\n\nOhlasy:\n{}'.format(p(data['vystupy_s_ohlasmi'][idx]['ohlas']))
     else:
