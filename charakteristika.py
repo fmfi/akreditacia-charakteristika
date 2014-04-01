@@ -345,7 +345,7 @@ def render_rtf_form(data, metadata):
     return soft_unicode(s)
   
   char = {}
-  char['DISPLAY_NAME'] = u', '.join(p(data[x]) for x in ['priezvisko', 'meno', 'titul_pred', 'titul_za'] if x is not colander.null)
+  char['DISPLAY_NAME'] = u', '.join(p(data[x]) for x in ['priezvisko', 'meno', 'titul_pred', 'titul_za'] if data[x] and data[x] is not colander.null)
   
   for field in ['rok_narodenia', 'veduci_bakalarske', 'veduci_diplomove', 'veduci_dizertacne', 'funkcie', 'dopln_program', 'dopln_dalsie', 'pracovisko', 'email']:
     char[field.upper()] = data[field]
