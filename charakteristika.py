@@ -383,7 +383,7 @@ def render_rtf_form(data, metadata):
       dest = '{}_{}'.format(field.replace('za_poslednych_6_rokov', '6R').upper(), idx)
       if idx < len(data[field]):
         char[dest] = p(data[field][idx]['popis'])
-        if data[field][idx]['nazov_zamestnavatela']:
+        if data[field][idx].get('nazov_zamestnavatela'):
           char[dest] += u' ({})'.format(p(data[field][idx]['nazov_zamestnavatela']))
       else:
         char[dest] = u''
