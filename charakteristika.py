@@ -141,9 +141,7 @@ def index():
     return render_template('login.html', next=goto_enc, next_url=goto)
   return show_form('user-{}'.format(g.user), user=g.user)
 
-@app.route('/vsetky')
-@restrict(roles=['admin', 'garant'])
-def vsetky():
+def load_documents(generate_links=False):
   documents = [x for x in os.listdir(config.document_dir) if x.endswith('.json')]
   loaded_documents = []
   for filename in documents:
@@ -165,15 +163,22 @@ def vsetky():
     else:
       doc['valid'] = True
     doc['spravne_vyplnene'] = doc['valid'] and doc.get('form', {}).get('konecna_podoba', False)
-    
-    if doc['valid']:
-      if tokmatch:
-        doc['url'] = url_for('rtf_using_token', token=tokmatch.group(1))
-      elif loginmatch:
-        doc['url'] = url_for('rtf_using_login', login=loginmatch.group(1))
-    else:
-      doc['url'] = None
+
+    if generate_links:
+      if doc['valid']:
+        if tokmatch:
+          doc['url'] = url_for('rtf_using_token', token=tokmatch.group(1))
+        elif loginmatch:
+          doc['url'] = url_for('rtf_using_login', login=loginmatch.group(1))
+      else:
+        doc['url'] = None
     loaded_documents.append(doc)
+  return loaded_documents
+
+@app.route('/vsetky')
+@restrict(roles=['admin', 'garant'])
+def vsetky():
+  loaded_documents = load_documents(generate_links=True)
   def sort_key(document):
     def sk(x):
       return collator.sort_key(soft_unicode(x))
@@ -320,14 +325,17 @@ def show_form(filename, metadata_default={}, **kwargs):
   saved = False
   if request.method == 'POST':
     controls = request.form.items(multi=True)
+    export_rtf = False
     try:
       data = form.validate(controls)
+      export_rtf = data.get('konecna_podoba', False)
     except ValidationFailure, e:
       pass
     metadata['updated'] = now
     savedata = {'metadata': metadata, 'form': data, 'cstruct': form.cstruct}
     save_form(savedata, filename)
-    save_rtf(savedata, filename)
+    if export_rtf:
+      save_rtf(savedata, filename)
     saved = True
   else:
     if loaded and 'cstruct' in loaded:
@@ -483,6 +491,7 @@ def multiple_replace(string, *key_values):
 
 if __name__ == '__main__':
   import sys
+  import traceback
 
   if len(sys.argv) == 2 and sys.argv[1] == 'cherry':
     from cherrypy import wsgiserver
@@ -494,5 +503,13 @@ if __name__ == '__main__':
         server.stop()
   elif len(sys.argv) == 3 and sys.argv[1] == 'ldap':
     print repr(query_ldap(sys.argv[2]))
+  elif len(sys.argv) == 2 and sys.argv[1] == 'pregeneruj-rtf':
+    for doc in load_documents():
+      try:
+        if doc['valid'] and doc['spravne_vyplnene']:
+          save_rtf(doc, doc['filename'])
+      except:
+        print 'Chyba pri generovani: {}'.format(doc['filename'])
+        print traceback.format_exc()
   else:
     app.run() # werkzeug
