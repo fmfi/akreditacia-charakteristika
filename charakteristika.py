@@ -507,7 +507,7 @@ if __name__ == '__main__':
     for doc in load_documents():
       try:
         if doc['valid'] and doc['spravne_vyplnene']:
-          save_rtf(doc, doc['filename'])
+          save_rtf(doc, doc['filename'][:-5])
       except:
         print 'Chyba pri generovani: {}'.format(doc['filename'])
         print traceback.format_exc()
