@@ -172,6 +172,10 @@ def load_documents(generate_links=False):
           doc['url'] = url_for('rtf_using_login', login=loginmatch.group(1))
       else:
         doc['url'] = None
+      if tokmatch:
+        doc['edit_url'] = url_for('using_token', token=tokmatch.group(1))
+      elif loginmatch:
+        doc['edit_url'] = url_for('using_login', login=loginmatch.group(1))
     loaded_documents.append(doc)
   return loaded_documents
 
@@ -212,6 +216,11 @@ def logout():
 @app.route('/<token:token>', methods=['POST', 'GET'])
 def using_token(token):
   return show_form('token-{}'.format(token), {'token':token}, token=token)
+
+@app.route('/<login>', methods=['POST', 'GET'])
+@restrict(roles=['admin', 'garant'])
+def using_login(login):
+  return show_form('user-{}'.format(login), user=login)
 
 @app.route('/<token:token>.rtf')
 def rtf_using_token(token):
@@ -308,8 +317,8 @@ def show_form(filename, metadata_default={}, **kwargs):
     data = {}
     metadata = {'created': now}
     metadata.update(metadata_default)
-    if g.user:
-      ldap_result = query_ldap(g.user)
+    if 'user' in kwargs:
+      ldap_result = query_ldap(kwargs['user'])
       if ldap_result:
         data = {
           'titul_pred': ldap_result[0],
