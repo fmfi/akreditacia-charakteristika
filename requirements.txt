@@ -1,0 +1,16 @@
+Chameleon==2.16
+Flask==0.10.1
+Jinja2==2.7.3
+MarkupSafe==0.23
+Werkzeug==0.9.6
+argparse==1.2.1
+colander==1.0b1
+deform==2.0a2
+itsdangerous==0.24
+peppercorn==0.4
+psycopg2==2.5.4
+python-ldap==2.4.16
+-e git+https://github.com/jtauber/pyuca.git@1467e4b792cce5c76a6f487883418af137421922#egg=pyuca-dev
+translationstring==1.1
+wsgiref==0.1.2
+zope.deprecation==4.1.1
