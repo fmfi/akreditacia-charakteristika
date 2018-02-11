@@ -96,7 +96,7 @@ class Vystup(MappingSchema):
     title=u'Celkovo'
   )
   za_poslednych_6_rokov = SchemaNode(Integer(),
-    title=u'Za posledných šesť rokov (2008-2013)'
+    title=u'Za posledných šesť rokov (2012-2017)'
   )
 
 class VystupBiblio(MappingSchema):
@@ -261,7 +261,7 @@ class Charakteristika(MappingSchema):
       name='najv_prace_za_poslednych_6_rokov',
       title=u''
     ),
-    title=Markup(u'<span class="cislovanie-ak">IV.3</span> Najvýznamnejšie publikované vedecké práce v rokoch 2008-2013'),
+    title=Markup(u'<span class="cislovanie-ak">IV.3</span> Najvýznamnejšie publikované vedecké práce v rokoch 2012-2017'),
     description=Markup(u'Uvádza sa najviac päť výstupov. <strong>Ak práca vznikla v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -271,7 +271,7 @@ class Charakteristika(MappingSchema):
       name='najv_projekty_za_poslednych_6_rokov',
       title=u''
     ),
-    title=Markup(u'<span class="cislovanie-ak">IV.4</span> Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2008-2013'),
+    title=Markup(u'<span class="cislovanie-ak">IV.4</span> Účasť na riešení (vedení) najvýznamnejších vedeckých projektov v rokoch 2012-2017'),
     description=Markup(u'Uvádzajú sa len projekty v pozícií zodpovedného riešiteľa a jeho zástupcu. Uvádza sa najviac päť projektov. <strong>Ak projekt vznikol v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>.'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
@@ -282,7 +282,7 @@ class Charakteristika(MappingSchema):
       title=u'Výstup s ohlasmi'
     ),
     title=Markup(u'<span class="cislovanie-ak">IV.5</span> Výstupy v oblasti poznania príslušného študijného odboru s najvýznamnejšími ohlasmi a prehľad ohlasov na tieto výstupy'),
-    description=Markup(u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. <strong>Ak výstup vznikol v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2008-2013).'),
+    description=Markup(u'Uvádza sa najviac päť výstupov s najvýznamnejšími ohlasmi. <strong>Ak výstup vznikol v pracovnom pomere mimo UK, treba uviesť zamestnávateľa</strong>. Okrem bibliografických údajov o výstupe sa uvádzajú aj informácie o jednotlivých ohlasoch – vrátane databázy, v ktorej je ohlas evidovaný. Uvádza sa najviac desať ohlasov na jeden výstup, z ktorých najmenej jeden vznikol v predchádzajúcich šiestich rokoch (v rokoch 2012-2017).'),
     validator=Length(max=5),
     widget=deform.widget.SequenceWidget(max_len=5)
   )
