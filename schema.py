@@ -185,9 +185,9 @@ class Charakteristika(MappingSchema):
   vzd_dalsie = SchemaNode(Sequence(),
     Vzdelanie(
       name='dalsie_vzdelanie',
-      title=u'Ďaľšie vzdelanie'
+      title=u'Ďalšie vzdelanie'
     ),
-    title=u'Ďaľšie vzdelávanie'
+    title=u'Ďalšie vzdelávanie'
   )
   veduci_bakalarske = SchemaNode(Integer(),
     title=u'Počet vedených bakalárskych prác'
