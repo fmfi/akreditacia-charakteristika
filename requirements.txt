@@ -9,7 +9,7 @@ deform==2.0a2
 itsdangerous==0.24
 peppercorn==0.4
 psycopg2==2.5.4
-python-ldap==2.4.16
+python-ldap==3.4.0
 -e git+https://github.com/jtauber/pyuca.git@1467e4b792cce5c76a6f487883418af137421922#egg=pyuca-dev
 translationstring==1.1
 wsgiref==0.1.2
